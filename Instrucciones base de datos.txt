@@ -1,0 +1,15 @@
+1. Instalar wampserver (https://wampserver.aviatechno.net/)
+
+2. Instalar versiones de MySQL 5.6.51, MariaDB 11.4.9, apache 2.4.65 y php 8.1.33 (en caso de que hagamos el proyecto en php esto ayudará, todo eso se puede instalar directamente desde la página del wamp.)
+
+3. Instalar MySQL Workbench (https://www.mysql.com/products/workbench/)
+
+4. ejecutar el wampserver (cuando se ponga verde el icono que sale abajo a la derecha significa que está listo)
+
+5. Abrir MySQL Workbench
+
+6. Darle click a '+' en MySQL Connections
+
+7. Dejan todo tal cual está (host 127.0.0.1 o localhost, port 3306, username root y el resto no tocan nada)
+
+8. Ejecutan los scripts y tendrán la base de datos de forma local en sus equipos!
