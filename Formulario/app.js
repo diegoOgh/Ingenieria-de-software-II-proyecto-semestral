@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             if (operacionExitosa) {
-                // Mostrar confirmación
+                // Mostrar confirmaciion
                 msgSuccess.classList.remove('hidden');
                 form.reset(); // Limpiar el formulario 
             } else {
