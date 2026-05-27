@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Plataforma Woldo - Módulo de registro de conflictos escolares.">
+    <title>Woldo | Registro de Incidente</title>
+    
+    <style>
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Plataforma Woldo</h1>
+        <p>Módulo de Organización y Resolución de Conflictos Escolares</p>
+        <hr>
+    </header>
+
+    <main>
+        <section aria-labelledby="form-title">
+            <h2 id="form-title">Registrar Nuevo Incidente</h2>
+            <p>Complete el siguiente formulario para ingresar un conflicto al sistema. Todos los campos marcados con asterisco (*) son obligatorios.</p>
+
+            <div id="msg-success" class="alert alert-success hidden" role="alert" aria-live="polite">
+                <strong>✔️ Registro Exitoso:</strong> El conflicto ha sido guardado correctamente en la base de datos.
+            </div>
+            
+            <div id="msg-error" class="alert alert-error hidden" role="alert" aria-live="assertive">
+                <strong>❌ Error:</strong> Verifica los datos ingresados o la conexión al sistema.
+            </div>
+
+            <form id="conflict-form" novalidate>
+                
+                <fieldset>
+                    <legend>Personal y Alumnos Involucrados</legend>
+                    
+                    <div class="form-group">
+                        <label for="funcionario">Funcionario que registra: *</label>
+                        <input 
+                            type="text" 
+                            id="funcionario" 
+                            name="funcionario" 
+                            placeholder="Ej. Juan Pérez" 
+                            autocomplete="name"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="alumnos">Alumnos involucrados: *</label>
+                        <input 
+                            type="text" 
+                            id="alumnos" 
+                            name="alumnos" 
+                            placeholder="Nombres completos de los involucrados" 
+                            aria-describedby="alumnos-help"
+                            required>
+                        <small id="alumnos-help">Separe los nombres con comas si hay más de un alumno.</small>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Detalles del Conflicto</legend>
+
+                    <div class="form-group">
+                        <label for="fecha">Fecha del incidente: *</label>
+                        <input 
+                            type="date" 
+                            id="fecha" 
+                            name="fecha" 
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descripcion">Descripción de los hechos: *</label>
+                        <textarea 
+                            id="descripcion" 
+                            name="descripcion" 
+                            rows="6" 
+                            minlength="20"
+                            placeholder="Describa objetivamente lo ocurrido. Detalle el contexto y las acciones previas..." 
+                            aria-describedby="desc-help"
+                            required></textarea>
+                        <small id="desc-help">La descripción debe contener un mínimo de 20 caracteres.</small>
+                    </div>
+                </fieldset>
+
+                <div class="form-actions">
+                    <button type="reset" id="btn-cancel" class="btn-secondary">Limpiar Formulario</button>
+                    <button type="submit" id="btn-submit" class="btn-primary">Guardar Incidente</button>
+                </div>
+
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <hr>
+        <p><small>&copy; 2026 Equipo 09 - Ingeniería de Software II. Proyecto Woldo.</small></p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
