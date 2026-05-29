@@ -37,8 +37,11 @@ La fecha de registro de un conflicto no puede ser posterior a la fecha actual, p
 ##### **TEST PARA LA BDD**
 
 
+1.- El sistema debe establecer una conexión exitosa y estable con la base de datos para asegurar su disponibilidad.
 
-1.-La tabla en la cual están registrados debe aceptar que la descripción pueda ser un campo nulo dado que es opcional, pero campos como el de los alumnos o el de funcionario no pueden ser nulos. 
+2.- La tabla de alumnos debe permitir la inserción correcta de datos simulados y asegurar que el registro se guarde efectivamente.
+
+3.- La tabla de conflictos debe rechazar cualquier intento de ingresar un caso si el funcionario asociado no existe, respetando su llave foránea.
 
 
 **TEST PARA EL BACKEND**
