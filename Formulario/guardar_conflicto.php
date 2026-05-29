@@ -79,12 +79,24 @@ try {
         $id_funcionario = $fila['id_funcionario'];
     }
 
-    // inserta conflicto principal
     $stmt3 = $conn->prepare(
-        "INSERT INTO gestion_conflictos.casos_conflicto (fecha_registro, estado_caso, id_funcionario_cargo)
-         VALUES (?, 'abierto', ?)"
+        "INSERT INTO gestion_conflictos.casos_conflicto
+        (
+            fecha_registro,
+            descripcion,
+            estado_caso,
+            id_funcionario_cargo
+        )
+        VALUES (?, ?, 'abierto', ?)"
     );
-    $stmt3->bind_param('si', $fecha, $id_funcionario);
+
+    $stmt3->bind_param(
+        'ssi',
+        $fecha,
+        $descripcion,
+        $id_funcionario
+    );
+
     $stmt3->execute();
     $id_conflicto = $conn->insert_id;
     $stmt3->close();
@@ -127,6 +139,7 @@ try {
         $stmt6->close();
     }
 
+    /*
     // 4. Guardar descripción si existe (opcional según proyecto)
     if (!empty($descripcion)) {
         // Guardamos en el historial como primera nota del conflicto
@@ -137,6 +150,8 @@ try {
         // Nota: la descripción se guarda en el campo que Pedro defina
         // Por ahora la dejamos registrada en el log de la transacción
     }
+    */
+
 
     $conn->commit();
     $conn->close();
