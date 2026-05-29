@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const funcionario = document.getElementById('funcionario').value.trim();
         const descripcion = document.getElementById('descripcion').value.trim();
 
-        if (!alumnos || !fechaInput || !funcionario || !descripcion) {
-            mostrarError('Todos los campos son obligatorios. Revisa que no haya espacios en blanco.');
+        if (!alumnos || !fechaInput || !funcionario) {
+            mostrarError('Los campos marcados con asterisco son obligatorios.');
             return;
         }
 
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarError('La fecha del incidente no puede ser en el futuro.');
             return;
         }
-        if (descripcion.length < 20) {
+        if (descripcion.length > 0 && descripcion.length < 20) {
             mostrarError('La descripción es muy corta. Por favor, detalla mejor lo ocurrido (mínimo 20 caracteres).');
             return;
         }
