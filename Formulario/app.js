@@ -42,18 +42,23 @@ document.addEventListener('DOMContentLoaded', () => {
             descripcion: descripcion
         };
 
-        const operacionExitosa = true; 
-
-        setTimeout(() => {
-            if (operacionExitosa) {
-                // Mostrar confirmaciion
+        fetch('guardar_conflicto.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.exito) {
                 msgSuccess.classList.remove('hidden');
-                form.reset(); // Limpiar el formulario 
+                form.reset();
             } else {
-                // Mostrar error de servidor
-                mostrarError('Error al conectar con la base de datos. Intenta nuevamente.');
+                mostrarError(data.mensaje);
             }
-        }, 500); 
+        })
+        .catch(() => {
+            mostrarError('Error al conectar con la base de datos. Intenta nuevamente.');
+        });
     });
 
     function mostrarError(mensaje) {
