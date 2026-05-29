@@ -30,6 +30,7 @@ USE gestion_conflictos;
 CREATE TABLE casos_conflicto (
     id_conflicto INT AUTO_INCREMENT PRIMARY KEY,
     fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    descripcion TEXT NOT NULL,
     estado_caso ENUM('abierto', 'en proceso', 'cerrado') DEFAULT 'abierto',
     id_funcionario_cargo INT NOT NULL,
     
