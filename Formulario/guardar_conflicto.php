@@ -32,12 +32,10 @@ if (empty($fecha)) {
     $errores[] = 'La fecha es obligatoria.';
 } else {
     // TEST: Fecha posterior a hoy
-    $hoy  = new DateTime();
-    $hoy->setTime(0, 0, 0);
     $fechaObj = DateTime::createFromFormat('Y-m-d', $fecha);
     if (!$fechaObj) {
         $errores[] = 'Formato de fecha inválido.';
-    } elseif ($fechaObj > $hoy) {
+    } elseif ($fecha > date('Y-m-d')) {
         $errores[] = 'La fecha no puede ser posterior a la fecha actual.';
     }
 }

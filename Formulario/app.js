@@ -20,16 +20,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const [year, month, day] = fechaInput.split('-');
-        const fechaIncidenteLocal = new Date(year, month - 1, day);
         
-        const fechaHoy = new Date();
-        fechaHoy.setHours(0, 0, 0, 0); 
+        const hoy = new Date();
+        const fechaHoyStr = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
 
-        if (fechaIncidenteLocal > fechaHoy) {
+        if (fechaInput > fechaHoyStr) {
             mostrarError('La fecha del incidente no puede ser en el futuro.');
             return;
-        }
+        }    
+
         if (descripcion.length > 0 && descripcion.length < 20) {
             mostrarError('La descripción es muy corta. Por favor, detalla mejor lo ocurrido (mínimo 20 caracteres).');
             return;
