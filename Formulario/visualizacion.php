@@ -3,11 +3,41 @@ require_once 'conexion.php';
 
 $conn = obtenerConexion();
 
+$funcionario = trim($_GET['funcionario'] ?? '');
+$alumno = trim($_GET['alumno'] ?? '');
+$estado = trim($_GET['estado'] ?? '');
+
+$condiciones = [];
+
+if (!empty($funcionario)) {
+    $condiciones[] =
+        "CONCAT(f.nombres, ' ', f.apellidos)
+         LIKE '%" . $conn->real_escape_string($funcionario) . "%'";
+}
+
+if (!empty($alumno)) {
+    $condiciones[] =
+        "CONCAT(a.nombre, ' ', a.apellidos)
+         LIKE '%" . $conn->real_escape_string($alumno) . "%'";
+}
+
+if (!empty($estado)) {
+    $condiciones[] =
+        "cc.estado_caso = '" . $conn->real_escape_string($estado) . "'";
+}
+
+$where = '';
+
+if (!empty($condiciones)) {
+    $where = 'WHERE ' . implode(' AND ', $condiciones);
+}
+
 $sql = "
     SELECT
         cc.id_conflicto,
         cc.fecha_registro,
         cc.descripcion,
+        cc.estado_caso,   
         CONCAT(f.nombres, ' ', f.apellidos) AS funcionario,
 
         GROUP_CONCAT(
@@ -26,10 +56,13 @@ $sql = "
     LEFT JOIN gestion_escolar.alumnos a
         ON dac.nro_matricula_alumno = a.nro_matricula
 
+    $where
+
     GROUP BY
         cc.id_conflicto,
         cc.fecha_registro,
         cc.descripcion,
+        cc.estado_caso,   
         funcionario
 
     ORDER BY cc.id_conflicto DESC
@@ -68,6 +101,28 @@ $resultado = $conn->query($sql);
                 <p class="text-sm text-gray-500 mt-1">Historial completo de incidentes reportados en el establecimiento.</p>
             </div>
 
+            <form method="GET">
+                <input
+                    type="text"
+                    name="funcionario"
+                    placeholder="Funcionario">
+
+                <input
+                    type="text"
+                    name="alumno"
+                    placeholder="Alumno">
+
+                <select name="estado">
+                    <option value="">Todos</option>
+                    <option value="abierto">Abierto</option>
+                    <option value="en proceso">En proceso</option>
+                    <option value="cerrado">Cerrado</option>
+                </select>
+                <button type="submit">
+                    Filtrar
+                </button>
+            </form>
+
             <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
                 <table class="w-full text-sm text-left text-gray-600 min-w-[800px]">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-200">
@@ -77,11 +132,22 @@ $resultado = $conn->query($sql);
                             <th scope="col" class="px-6 py-3.5 font-semibold">Alumnos Involucrados</th>
                             <th scope="col" class="px-6 py-3.5 font-semibold w-40">Fecha</th>
                             <th scope="col" class="px-6 py-3.5 font-semibold">Descripción de los Hechos</th>
+                            <th scope="col" class="px-6 py-3.5 font-semibold text-center">Estado</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 bg-white">
                         <?php if ($resultado && $resultado->num_rows > 0): ?>
                             <?php while($fila = $resultado->fetch_assoc()): ?>
+
+                                <?php
+                                $estadoClase = match($fila['estado_caso']) {
+                                    'abierto' => 'bg-red-100 text-red-700 border-red-200',
+                                    'en proceso' => 'bg-yellow-100 text-yellow-700 border-yellow-200',
+                                    'cerrado' => 'bg-green-100 text-green-700 border-green-200',
+                                    default => 'bg-gray-100 text-gray-700 border-gray-200'
+                                };
+                                ?>
+
                                 <tr class="hover:bg-gray-50/70 transition-colors">
                                     <td class="px-4 py-4 font-bold text-gray-900 text-center bg-gray-50/30">
                                         <?= $fila['id_conflicto'] ?>
@@ -95,7 +161,7 @@ $resultado = $conn->query($sql);
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-gray-500 whitespace-nowrap">
-                                        <?= date("d/m/Y H:i", strtotime($fila['fecha_registro'])) ?>
+                                        <?= date("d/m/Y", strtotime($fila['fecha_registro'])) ?>
                                     </td>
                                     <td class="px-6 py-4 text-gray-600 max-w-sm break-words" id="desc-<?= $fila['id_conflicto'] ?>">
                                         <span class="desc-texto"><?= htmlspecialchars($fila['descripcion'] ?? '') ?></span>
@@ -104,6 +170,13 @@ $resultado = $conn->query($sql);
                                             Editar
                                         </button>
                                     </td>
+
+                                    <td class="text-center">
+                                        <span class="<?= $estadoClase ?> px-3 py-1 rounded-full text-xs font-semibold border">
+                                            <?= htmlspecialchars($fila['estado_caso']) ?>
+                                        </span>
+                                    </td>
+
                                 </tr>
                             <?php endwhile; ?>
                         <?php else: ?>
