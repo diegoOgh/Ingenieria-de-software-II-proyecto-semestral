@@ -97,8 +97,12 @@ $resultado = $conn->query($sql);
                                     <td class="px-6 py-4 text-gray-500 whitespace-nowrap">
                                         <?= date("d/m/Y H:i", strtotime($fila['fecha_registro'])) ?>
                                     </td>
-                                    <td class="px-6 py-4 text-gray-600 max-w-sm break-words">
-                                        <?= htmlspecialchars($fila['descripcion']) ?>
+                                    <td class="px-6 py-4 text-gray-600 max-w-sm break-words" id="desc-<?= $fila['id_conflicto'] ?>">
+                                        <span class="desc-texto"><?= htmlspecialchars($fila['descripcion'] ?? '') ?></span>
+                                        <button onclick="editarDescripcion(<?= $fila['id_conflicto'] ?>)" 
+                                                class="ml-2 text-blue-500 hover:text-blue-700 text-xs underline">
+                                            Editar
+                                        </button>
                                     </td>
                                 </tr>
                             <?php endwhile; ?>
@@ -125,6 +129,41 @@ $resultado = $conn->query($sql);
     <footer class="text-center py-4 bg-white border-t border-gray-200 text-xs text-gray-400">
         &copy; 2026 Plataforma Woldo. Todos los derechos reservados.
     </footer>
+
+
+<script>
+function editarDescripcion(id) {
+    const celda = document.getElementById('desc-' + id);
+    const textoActual = celda.querySelector('.desc-texto').textContent.trim();
+
+    celda.innerHTML = `
+        <textarea id="input-desc-${id}" class="w-full border border-gray-300 rounded p-1 text-sm" rows="3">${textoActual}</textarea>
+        <div class="mt-1 flex gap-2">
+            <button onclick="guardarDescripcion(${id})" class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">Guardar</button>
+            <button onclick="location.reload()" class="text-xs bg-gray-300 text-gray-700 px-2 py-1 rounded hover:bg-gray-400">Cancelar</button>
+        </div>
+    `;
+}
+
+function guardarDescripcion(id) {
+    const nuevaDesc = document.getElementById('input-desc-' + id).value.trim();
+
+    fetch('editar_descripcion.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_conflicto: id, descripcion: nuevaDesc })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.exito) {
+            location.reload();
+        } else {
+            alert('Error: ' + data.mensaje);
+        }
+    })
+    .catch(() => alert('Error al conectar con el servidor.'));
+}
+</script>
 
 </body>
 </html>
