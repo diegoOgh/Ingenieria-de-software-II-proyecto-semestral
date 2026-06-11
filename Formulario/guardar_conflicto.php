@@ -13,16 +13,17 @@ if (!$input) {
     exit;
 }
 
-$alumnos_ids = $input['alumnos'] ?? [];
-$fecha       = trim($input['fecha'] ?? '');
-$funcionario = trim($input['funcionario'] ?? '');
-$descripcion = trim($input['descripcion'] ?? '');
+$alumnos_ids    = $input['alumnos'] ?? [];
+$fecha          = trim($input['fecha'] ?? '');
+$funcionario_id = (int)($input['funcionario_id'] ?? 0);
+$descripcion    = trim($input['descripcion'] ?? '');
 
 $errores = [];
 
-if (empty($funcionario)) {
+if ($funcionario_id <= 0) {
     $errores[] = 'El funcionario es obligatorio.';
 }
+
 if (empty($alumnos_ids) || !is_array($alumnos_ids)) {
     $errores[] = 'Debes seleccionar al menos un alumno.';
 }
@@ -48,31 +49,7 @@ try {
     $conn->begin_transaction();
 
     // insertar el funcionario por nombre
-    $stmt = $conn->prepare(
-        "SELECT id_funcionario FROM gestion_escolar.funcionarios 
-         WHERE CONCAT(nombres, ' ', apellidos) = ? LIMIT 1"
-    );
-    $stmt->bind_param('s', $funcionario);
-    $stmt->execute();
-    $resultado = $stmt->get_result();
-    $stmt->close();
-
-    if ($resultado->num_rows === 0) {
-        // se incerta si no existe, con nombre y apellido separados por espacio
-        $partes = explode(' ', $funcionario, 2);
-        $nombre_func   = $partes[0];
-        $apellido_func = $partes[1] ?? '';
-        $stmt2 = $conn->prepare(
-            "INSERT INTO gestion_escolar.funcionarios (nombres, apellidos) VALUES (?, ?)"
-        );
-        $stmt2->bind_param('ss', $nombre_func, $apellido_func);
-        $stmt2->execute();
-        $id_funcionario = $conn->insert_id;
-        $stmt2->close();
-    } else {
-        $fila = $resultado->fetch_assoc();
-        $id_funcionario = $fila['id_funcionario'];
-    }
+    $id_funcionario = $funcionario_id;
 
     $stmt3 = $conn->prepare(
         "INSERT INTO gestion_conflictos.casos_conflicto

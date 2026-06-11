@@ -10,6 +10,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const alumnosIds    = document.getElementById('alumnos-ids');
     const fechaInput    = document.getElementById('fecha');
 
+    const funcionarioSelect = document.getElementById('funcionario-select');
+
+    //Se pide la lista completa de funcionarios a php
+    fetch('buscar_funcionarios.php?q=todos')
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(f => {
+                //por cada fucnionario leído se crea una nueva opción para elegir.
+                const option = document.createElement('option');
+                option.value = f.id;
+                //Se muestra solo el nombre y apellido del funcionario.
+                option.textContent = f.nombre;
+                funcionarioSelect.appendChild(option);
+            });
+        });
 
     const hoy = new Date();
     const fechaHoyStr = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
@@ -147,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!e.target.closest('#autocomplete-wrap') && !e.target.closest('#curso-select')) {
             cerrarDropdown();
         }
+
     });
 
     // ── enviar
@@ -156,11 +172,12 @@ document.addEventListener('DOMContentLoaded', () => {
         msgSuccess.classList.add('hidden');
         msgError.classList.add('hidden');
 
-        const funcionario = document.getElementById('funcionario').value.trim();
+
         const fecha       = fechaInput.value;
         const descripcion = document.getElementById('descripcion').value.trim();
+        const funcionarioID = funcionarioSelect.value;
 
-        if (!funcionario || !fecha) {
+        if (!funcionarioID || !fecha) {
             mostrarError('Los campos marcados con asterisco son obligatorios.');
             return;
         }
@@ -181,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const formData = {
-            funcionario,
+            funcionario_id: Number(funcionarioID),
             fecha,
             descripcion,
             alumnos: [...alumnosSeleccionados.keys()].map(Number),
