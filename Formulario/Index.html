@@ -8,18 +8,27 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+
     <style>
         .hidden { display: none !important; }
+        .fuente-woldo { font-family: 'Nunito', sans-serif; font-weight: 800; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between font-sans antialiased">
 
     <header class="bg-blue-700 text-white shadow-md py-6 px-4 mb-8">
-        <div class="max-w-4xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-            <div>
-                <h1 class="text-2xl font-extrabold tracking-tight">Plataforma Woldo</h1>
-                <p class="text-sm text-blue-100 mt-1">Módulo de Organización y Resolución de Conflictos Escolares</p>
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            
+            <div class="flex items-center gap-3">
+                <img src="img/logoWoldoW.png" alt="Logo Woldo" class="w-16 h-16 object-contain drop-shadow-md">
+                
+                <div>
+                    <h1 class="fuente-woldo text-3xl tracking-tight">WOLDO</h1>
+                    <p class="text-xs text-blue-100 mt-1 opacity-90 tracking-wide uppercase">Plataforma de Organización y Resolución de Conflictos Escolares</p>
+                </div>
             </div>
+
             <button type="button" 
                     onclick="window.location.href='visualizacion.php'"
                     class="self-start md:self-center bg-blue-600 hover:bg-blue-800 text-white text-sm font-medium py-2 px-4 rounded-lg shadow border border-blue-500 transition duration-150">
@@ -31,7 +40,7 @@
     <main class="flex-grow w-full max-w-4xl mx-auto px-4 pb-12">
         <section aria-labelledby="form-title" class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8">
             
-            <h2 id="form-title" class="text-2xl font-bold text-gray-900 tracking-tight">Registrar Nuevo Incidente</h2>
+            <h2 id="form-title" class="fuente-woldo text-2xl text-gray-900 tracking-tight">Registrar Nuevo Incidente</h2>
             <p class="text-sm text-gray-500 mt-2 mb-6">
                 Complete el siguiente formulario para ingresar un conflicto al sistema. Todos los campos marcados con asterisco (<span class="text-red-500">*</span>) son obligatorios.
             </p>
@@ -61,14 +70,12 @@
                         </select>
                     </div>
 
-                    <!--buscador de alumnos!!-->
                     <div class="form-group flex flex-col gap-2">
                         <label class="text-sm font-medium text-gray-700">
                             Alumnos involucrados: <span class="text-red-500">*</span>
                         </label>
 
                         <div class="flex flex-col sm:flex-row gap-3">
-                            <!-- Selector de curso -->
                             <select id="curso-select"
                                     class="w-full sm:w-56 px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="">— Seleccionar curso —</option>
@@ -90,7 +97,6 @@
                                 </optgroup>
                             </select>
 
-                            <!--búsqueda con autocomplete -->
                             <div class="relative flex-1" id="autocomplete-wrap">
                                 <input type="text" id="alumno-input"
                                     placeholder="Escriba el nombre del alumno..."
@@ -106,18 +112,15 @@
                             Selecciona el curso primero, luego escribe el nombre. Agrega todos los alumnos involucrados.
                         </small>
 
-                        <!-- etiquetas de alumnos agregados -->
                         <div id="alumnos-tags" class="flex flex-wrap gap-2 mt-1 min-h-[2rem]">
                             <span id="tags-empty" class="text-xs text-gray-400 italic self-center">
                                 Ningún alumno agregado aún.
                             </span>
                         </div>
 
-                        <!-- se envía al backend -->
                         <input type="hidden" id="alumnos-ids" name="alumnos">
                     </div>
                 </fieldset>
-
 
                 <fieldset class="border border-gray-200 rounded-xl p-5 bg-gray-50/50 space-y-4">
                     <legend class="text-sm font-semibold text-gray-600 px-3 uppercase tracking-wider bg-white border border-gray-200 rounded-full shadow-sm">
