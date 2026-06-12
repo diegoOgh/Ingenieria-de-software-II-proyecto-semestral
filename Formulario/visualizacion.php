@@ -148,7 +148,18 @@ $resultado = $conn->query($sql);
                                 };
                                 ?>
 
-                                <tr class="hover:bg-gray-50/70 transition-colors">
+                                <tr class="hover:bg-blue-50
+                                hover:shadow-md
+                                cursor-pointer
+                                transition-all
+                                duration-200" 
+                                data-id="<?= $fila['id_conflicto'] ?>"
+                                data-funcionario="<?= htmlspecialchars($fila['funcionario']) ?>"
+                                data-alumnos="<?= htmlspecialchars($fila['alumnos']) ?>"
+                                data-fecha="<?= htmlspecialchars($fila['fecha_registro']) ?>"
+                                data-estado="<?= htmlspecialchars($fila['estado_caso']) ?>"
+                                data-descripcion="<?= htmlspecialchars($fila['descripcion']) ?>">
+
                                     <td class="px-4 py-4 font-bold text-gray-900 text-center bg-gray-50/30">
                                         <?= $fila['id_conflicto'] ?>
                                     </td>
@@ -236,6 +247,107 @@ function guardarDescripcion(id) {
     })
     .catch(() => alert('Error al conectar con el servidor.'));
 }
+</script>
+ 
+<div
+    id="modal"
+    class="hidden fixed inset-0 bg-black/50 flex items-center justify-center"
+>
+    <div class="bg-white p-6 rounded-xl max-w-2xl w-full">
+
+        <h2 id="modalTitulo"></h2>
+
+        <div id="modalContenido"></div>
+
+        <button
+            id="cerrarModal"
+            class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        >
+            Cerrar
+        </button>
+
+    </div>
+</div>
+
+<script>
+document.querySelectorAll("tbody tr").forEach(fila => {
+
+    fila.addEventListener("click", (e) => {
+
+        // Evita abrir modal si se hizo click en Editar
+        if (
+            e.target.tagName === "BUTTON" ||
+            e.target.tagName === "TEXTAREA"
+        ) {
+            return;
+        }
+
+        document.getElementById("modalTitulo").textContent =
+            "Conflicto #" + fila.dataset.id;
+
+        document.getElementById("modalContenido").innerHTML = `
+            <div class="space-y-3">
+
+                <p>
+                    <strong>Funcionario:</strong>
+                    ${fila.dataset.funcionario}
+                </p>
+
+                <p>
+                    <strong>Alumnos:</strong>
+                    ${fila.dataset.alumnos}
+                </p>
+
+                <p>
+                    <strong>Fecha:</strong>
+                    ${fila.dataset.fecha}
+                </p>
+
+                <p>
+                    <strong>Estado:</strong>
+                    ${fila.dataset.estado}
+                </p>
+
+                <div>
+                    <strong>Descripción:</strong>
+
+                    <div class="mt-2 p-3 bg-gray-50 rounded border">
+                        ${fila.dataset.descripcion}
+                    </div>
+                </div>
+
+            </div>
+        `;
+
+        document
+            .getElementById("modal")
+            .classList.remove("hidden");
+
+    });
+
+});
+
+document
+    .getElementById("cerrarModal")
+    .addEventListener("click", () => {
+
+        document
+            .getElementById("modal")
+            .classList.add("hidden");
+
+    });
+
+document
+    .getElementById("modal")
+    .addEventListener("click", (e) => {
+
+        if (e.target.id === "modal") {
+            document
+                .getElementById("modal")
+                .classList.add("hidden");
+        }
+
+    });
 </script>
 
 </body>
