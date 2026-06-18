@@ -74,7 +74,7 @@ CREATE TABLE usuario (
     email VARCHAR(100) UNIQUE NOT NULL,
     contrasena VARCHAR(255) NOT NULL,
     id_rol INT NOT NULL,
-    id_funcionario INT NOT NULL UNIQUE, --garantiza la relación 1:1
+    id_funcionario INT NOT NULL UNIQUE,
     
     -- Llave foránea a rol
     FOREIGN KEY (id_rol) 
