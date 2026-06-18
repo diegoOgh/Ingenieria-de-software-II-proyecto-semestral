@@ -5,6 +5,7 @@ header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
 require_once 'conexion.php';
+require_once 'enviar_correo.php';
 
 $input = json_decode(file_get_contents('php://input'), true);
 
@@ -89,6 +90,7 @@ try {
 
 
     $conn->commit();
+    enviarNotificacionEncargado($id_conflicto, $fecha, $descripcion);
     $conn->close();
 
     // TEST 1: Respuesta de éxito
