@@ -6,6 +6,8 @@ $conn = obtenerConexion();
 $funcionario = trim($_GET['funcionario'] ?? '');
 $alumno = trim($_GET['alumno'] ?? '');
 $estado = trim($_GET['estado'] ?? '');
+$fechaDesde  = trim($_GET['fecha_desde'] ?? '');
+$fechaHasta  = trim($_GET['fecha_hasta'] ?? '');
 
 $condiciones = [];
 
@@ -16,9 +18,30 @@ if (!empty($funcionario)) {
 }
 
 if (!empty($alumno)) {
+    $condiciones[] = "
+        cc.id_conflicto IN (
+            SELECT dac2.id_conflicto
+            FROM gestion_conflictos.detalle_alumnos_conflicto dac2
+            JOIN gestion_escolar.alumnos a2
+                ON dac2.nro_matricula_alumno = a2.nro_matricula
+            WHERE CONCAT(a2.nombre, ' ', a2.apellidos)
+            LIKE '%" . $conn->real_escape_string($alumno) . "%'
+        )
+    ";
+}
+
+if (!empty($fechaDesde)) {
     $condiciones[] =
-        "CONCAT(a.nombre, ' ', a.apellidos)
-         LIKE '%" . $conn->real_escape_string($alumno) . "%'";
+        "DATE(cc.fecha_registro) >= '" .
+        $conn->real_escape_string($fechaDesde) .
+        "'";
+}
+
+if (!empty($fechaHasta)) {
+    $condiciones[] =
+        "DATE(cc.fecha_registro) <= '" .
+        $conn->real_escape_string($fechaHasta) .
+        "'";
 }
 
 if (!empty($estado)) {
@@ -101,27 +124,119 @@ $resultado = $conn->query($sql);
                 <p class="text-sm text-gray-500 mt-1">Historial completo de incidentes reportados en el establecimiento.</p>
             </div>
 
-            <form method="GET">
-                <input
-                    type="text"
-                    name="funcionario"
-                    placeholder="Funcionario">
+            <div class="mb-8">
+                <form
+                    method="GET"
+                    class="bg-gray-50 border border-gray-200 rounded-2xl p-5 shadow-sm"
+                >
 
-                <input
-                    type="text"
-                    name="alumno"
-                    placeholder="Alumno">
+                    <div class="flex flex-wrap items-end gap-4">
 
-                <select name="estado">
-                    <option value="">Todos</option>
-                    <option value="abierto">Abierto</option>
-                    <option value="en proceso">En proceso</option>
-                    <option value="cerrado">Cerrado</option>
-                </select>
-                <button type="submit">
-                    Filtrar
-                </button>
-            </form>
+                        <div class="flex flex-col">
+                            <label class="text-sm font-medium text-gray-700 mb-1">
+                                Funcionario
+                            </label>
+
+                            <input
+                                type="text"
+                                name="funcionario"
+                                value="<?= htmlspecialchars($funcionario) ?>"
+                                placeholder="Buscar funcionario..."
+                                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                            >
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="text-sm font-medium text-gray-700 mb-1">
+                                Alumno
+                            </label>
+
+                            <input
+                                type="text"
+                                name="alumno"
+                                value="<?= htmlspecialchars($alumno) ?>"
+                                placeholder="Buscar alumno..."
+                                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                            >
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="text-sm font-medium text-gray-700 mb-1">
+                                Desde
+                            </label>
+
+                            <input
+                                type="date"
+                                name="fecha_desde"
+                                value="<?= htmlspecialchars($fechaDesde) ?>"
+                                class="px-4 py-2 border border-gray-300 rounded-lg
+                                    focus:ring-2 focus:ring-blue-500
+                                    focus:border-blue-500 outline-none"
+                            >
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="text-sm font-medium text-gray-700 mb-1">
+                                Hasta
+                            </label>
+
+                            <input
+                                type="date"
+                                name="fecha_hasta"
+                                value="<?= htmlspecialchars($fechaHasta) ?>"
+                                class="px-4 py-2 border border-gray-300 rounded-lg
+                                    focus:ring-2 focus:ring-blue-500
+                                    focus:border-blue-500 outline-none"
+                            >
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="text-sm font-medium text-gray-700 mb-1">
+                                Estado
+                            </label>
+
+                            <select
+                                name="estado"
+                                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                            >
+                                <option value="">Todos</option>
+
+                                <option value="abierto"
+                                    <?= $estado === 'abierto' ? 'selected' : '' ?>>
+                                    Abierto
+                                </option>
+
+                                <option value="en proceso"
+                                    <?= $estado === 'en proceso' ? 'selected' : '' ?>>
+                                    En proceso
+                                </option>
+
+                                <option value="cerrado"
+                                    <?= $estado === 'cerrado' ? 'selected' : '' ?>>
+                                    Cerrado
+                                </option>
+
+                            </select>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg shadow transition"
+                        >
+                            Filtrar
+                        </button>
+
+                        <a
+                            href="visualizacion.php"
+                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-5 py-2 rounded-lg transition"
+                        >
+                            Limpiar
+                        </a>
+
+                    </div>
+
+                </form>
+            </div>
 
             <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
                 <table class="w-full text-sm text-left text-gray-600 min-w-[800px]">
