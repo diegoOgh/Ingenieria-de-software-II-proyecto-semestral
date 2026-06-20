@@ -291,10 +291,6 @@ $resultado = $conn->query($sql);
                                     </td>
                                     <td class="px-6 py-4 text-gray-600 max-w-sm break-words" id="desc-<?= $fila['id_conflicto'] ?>">
                                         <span class="desc-texto"><?= htmlspecialchars($fila['descripcion'] ?? '') ?></span>
-                                        <button onclick="editarDescripcion(<?= $fila['id_conflicto'] ?>)" 
-                                                class="ml-2 text-blue-500 hover:text-blue-700 text-xs underline">
-                                            Editar
-                                        </button>
                                     </td>
 
                                     <td class="text-center">
@@ -330,39 +326,7 @@ $resultado = $conn->query($sql);
     </footer>
 
 
-<script>
-function editarDescripcion(id) {
-    const celda = document.getElementById('desc-' + id);
-    const textoActual = celda.querySelector('.desc-texto').textContent.trim();
 
-    celda.innerHTML = `
-        <textarea id="input-desc-${id}" class="w-full border border-gray-300 rounded p-1 text-sm" rows="3">${textoActual}</textarea>
-        <div class="mt-1 flex gap-2">
-            <button onclick="guardarDescripcion(${id})" class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">Guardar</button>
-            <button onclick="location.reload()" class="text-xs bg-gray-300 text-gray-700 px-2 py-1 rounded hover:bg-gray-400">Cancelar</button>
-        </div>
-    `;
-}
-
-function guardarDescripcion(id) {
-    const nuevaDesc = document.getElementById('input-desc-' + id).value.trim();
-
-    fetch('editar_descripcion.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id_conflicto: id, descripcion: nuevaDesc })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.exito) {
-            location.reload();
-        } else {
-            alert('Error: ' + data.mensaje);
-        }
-    })
-    .catch(() => alert('Error al conectar con el servidor.'));
-}
-</script>
  
 <div
     id="modal"
@@ -388,81 +352,93 @@ function guardarDescripcion(id) {
 document.querySelectorAll("tbody tr").forEach(fila => {
 
     fila.addEventListener("click", (e) => {
-
-        // Evita abrir modal si se hizo click en Editar
-        if (
-            e.target.tagName === "BUTTON" ||
-            e.target.tagName === "TEXTAREA"
-        ) {
+        if (e.target.tagName === "BUTTON" || e.target.tagName === "TEXTAREA") {
             return;
         }
 
-        document.getElementById("modalTitulo").textContent =
-            "Conflicto #" + fila.dataset.id;
+        const id = fila.dataset.id;
+
+        document.getElementById("modalTitulo").textContent = "Conflicto #" + id;
 
         document.getElementById("modalContenido").innerHTML = `
             <div class="space-y-3">
 
-                <p>
-                    <strong>Funcionario:</strong>
-                    ${fila.dataset.funcionario}
-                </p>
-
-                <p>
-                    <strong>Alumnos:</strong>
-                    ${fila.dataset.alumnos}
-                </p>
-
-                <p>
-                    <strong>Fecha:</strong>
-                    ${fila.dataset.fecha}
-                </p>
-
-                <p>
-                    <strong>Estado:</strong>
-                    ${fila.dataset.estado}
-                </p>
+                <p><strong>Funcionario:</strong> ${fila.dataset.funcionario}</p>
+                <p><strong>Alumnos:</strong> ${fila.dataset.alumnos}</p>
+                <p><strong>Fecha:</strong> ${fila.dataset.fecha}</p>
 
                 <div>
-                    <strong>Descripción:</strong>
-
-                    <div class="mt-2 p-3 bg-gray-50 rounded border">
-                        ${fila.dataset.descripcion}
-                    </div>
+                    <label class="block font-semibold mb-1">Estado:</label>
+                    <select id="modal-estado" class="w-full border border-gray-300 rounded p-2 text-sm">
+                        <option value="abierto" ${fila.dataset.estado === 'abierto' ? 'selected' : ''}>Abierto</option>
+                        <option value="en proceso" ${fila.dataset.estado === 'en proceso' ? 'selected' : ''}>En proceso</option>
+                        <option value="cerrado" ${fila.dataset.estado === 'cerrado' ? 'selected' : ''}>Cerrado</option>
+                    </select>
                 </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Descripción:</label>
+                    <textarea id="modal-descripcion" rows="4" class="w-full border border-gray-300 rounded p-2 text-sm">${fila.dataset.descripcion}</textarea>
+                </div>
+
+                <div id="modal-mensaje" class="hidden text-sm font-medium"></div>
+
+                <button id="guardarCambios"
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded font-medium">
+                    Guardar Cambios
+                </button>
 
             </div>
         `;
 
-        document
-            .getElementById("modal")
-            .classList.remove("hidden");
+        document.getElementById("modal").classList.remove("hidden");
+
+        document.getElementById("guardarCambios").addEventListener("click", () => {
+            const nuevaDescripcion = document.getElementById("modal-descripcion").value.trim();
+            const nuevoEstado = document.getElementById("modal-estado").value;
+            const msgDiv = document.getElementById("modal-mensaje");
+
+            fetch('editar_conflicto.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id_conflicto: id,
+                    descripcion: nuevaDescripcion,
+                    estado: nuevoEstado
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                msgDiv.classList.remove('hidden');
+                if (data.exito) {
+                    msgDiv.className = 'text-sm font-medium text-emerald-600';
+                    msgDiv.textContent = '✓ ' + data.mensaje;
+                    setTimeout(() => location.reload(), 800);
+                } else {
+                    msgDiv.className = 'text-sm font-medium text-rose-600';
+                    msgDiv.textContent = '✗ ' + data.mensaje;
+                }
+            })
+            .catch(() => {
+                msgDiv.classList.remove('hidden');
+                msgDiv.className = 'text-sm font-medium text-rose-600';
+                msgDiv.textContent = '✗ Error al conectar con el servidor.';
+            });
+        });
 
     });
 
 });
 
-document
-    .getElementById("cerrarModal")
-    .addEventListener("click", () => {
+document.getElementById("cerrarModal").addEventListener("click", () => {
+    document.getElementById("modal").classList.add("hidden");
+});
 
-        document
-            .getElementById("modal")
-            .classList.add("hidden");
-
-    });
-
-document
-    .getElementById("modal")
-    .addEventListener("click", (e) => {
-
-        if (e.target.id === "modal") {
-            document
-                .getElementById("modal")
-                .classList.add("hidden");
-        }
-
-    });
+document.getElementById("modal").addEventListener("click", (e) => {
+    if (e.target.id === "modal") {
+        document.getElementById("modal").classList.add("hidden");
+    }
+});
 </script>
 
 </body>
