@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style> .hidden { display: none !important; } </style>
 </head>
-<body class="min-h-screen flex items-center justify-center font-sans antialiased p-4">
+<body class="min-h-screen flex items-center justify-center font-sans antialiased p-4 bg-blue-100">
 
     <main class="max-w-md w-full bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
         <div class="bg-blue-700 p-6 text-center">
@@ -79,8 +79,9 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.exito) {
-                        // Redirigir al panel principal tras el login exitoso
-                        window.location.href = 'Index.html';
+                        localStorage.setItem('rol', data.rol);
+                        localStorage.setItem('nombre', data.nombre); 
+                        window.location.href = 'dashboard.html';
                     } else {
                         mostrarError(data.mensaje);
                     }

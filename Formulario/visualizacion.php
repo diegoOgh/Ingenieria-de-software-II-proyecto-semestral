@@ -99,23 +99,58 @@ $resultado = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Woldo | Conflictos Registrados</title>
+    <title>Woldo | Visualización</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .hidden { display: none !important; }
+        .fuente-woldo { font-family: 'Nunito', sans-serif; font-weight: 800; }
+        body { font-family: 'Inter', sans-serif; background-color: #F0F2F5; }
+
+        .header-user { display: flex; align-items: center; gap: 10px; border-left: 1px solid rgba(255,255,255,0.2); padding-left: 16px; margin-left: 4px; }
+        .header-avatar { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; letter-spacing: 0.01em; }
+        .header-user-name { font-size: 13px; font-weight: 600; color: #fff; line-height: 1.2; }
+        .header-user-role { font-size: 11px; color: rgba(255,255,255,0.6); }
+        .btn-nav { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.9); background: transparent; border: 1px solid rgba(255,255,255,0.35); border-radius: 8px; padding: 7px 15px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s, border-color 0.15s; }
+        .btn-nav:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.6); }
+        .btn-logout { font-size: 13px; color: rgba(255,255,255,0.65); background: transparent; border: none; padding: 7px 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: color 0.15s, background 0.15s; }
+        .btn-logout:hover { color: #fff; background: rgba(255,255,255,0.1); border-radius: 8px; }
+    </style>
 </head>
+
 <body class="min-h-screen flex flex-col justify-between font-sans antialiased">
 
-    <header class="bg-blue-700 text-white shadow-md py-6 px-4 mb-8">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-            <div>
-                <h1 class="text-2xl font-extrabold tracking-tight">Plataforma Woldo</h1>
-                <p class="text-sm text-blue-100 mt-1">Módulo de Organización y Resolución de Conflictos Escolares</p>
-            </div>
-            <a href="index.html" class="self-start md:self-center bg-blue-600 hover:bg-blue-800 text-white text-sm font-medium py-2 px-4 rounded-lg shadow border border-blue-500 transition duration-150 text-center">
-                ➕ Registrar Nuevo Incidente
-            </a>
-        </div>
-    </header>
+   <header class="bg-blue-700 text-white py-4 px-4 shadow-md">
+    <div class="max-w-[1400px] mx-auto flex justify-between items-center gap-6 px-2">
 
+        <div class="flex items-center gap-3 flex-shrink-0">
+            <img src="img/logoWoldoW.png" alt="Logo Woldo" class="w-10 h-10 object-contain drop-shadow">
+            <div>
+                <h1 class="fuente-woldo text-xl tracking-tight leading-none">WOLDO</h1>
+                <p class="text-xs text-blue-200 uppercase tracking-wider mt-1">Visualización</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            
+            <a href="dashboard.html" class="btn-nav">
+                ← Volver al Panel
+            </a>
+
+            <div class="header-user">
+                <div class="header-avatar" id="header-avatar">—</div>
+                <div>
+                    <div class="header-user-name" id="nombre-usuario">Cargando...</div>
+                    <div class="header-user-role" id="rol-usuario"></div>
+                </div>
+                <button id="btn-cerrar-sesion" class="btn-logout" title="Cerrar sesión">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Salir
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
     <main class="flex-grow w-full max-w-6xl mx-auto px-4 pb-12">
         <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8">
             
@@ -312,11 +347,6 @@ $resultado = $conn->query($sql);
                 </table>
             </div>
 
-            <div class="mt-6 flex justify-start">
-                <a href="index.html" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors gap-1">
-                    ← Volver al Panel de Registro
-                </a>
-            </div>
 
         </div>
     </main>
@@ -347,96 +377,117 @@ $resultado = $conn->query($sql);
 
     </div>
 </div>
-
 <script>
-document.querySelectorAll("tbody tr").forEach(fila => {
+document.addEventListener('DOMContentLoaded', () => {
 
-    fila.addEventListener("click", (e) => {
-        if (e.target.tagName === "BUTTON" || e.target.tagName === "TEXTAREA") {
-            return;
-        }
+    const rolUsuario = localStorage.getItem('rol');
+    const nombreGuard = localStorage.getItem('nombre') || 'Usuario';
+    
+    // Nombre
+    const nomEl = document.getElementById('nombre-usuario');
+    if (nomEl) nomEl.textContent = nombreGuard;
 
-        const id = fila.dataset.id;
+    // Rol
+    const rolEl = document.getElementById('rol-usuario');
+    if (rolEl && rolUsuario) {
+        rolEl.textContent = (rolUsuario === '2') ? 'Encargado de Convivencia' : 'Funcionario General';
+    }
 
-        document.getElementById("modalTitulo").textContent = "Conflicto #" + id;
+    // Avatar
+    const avatar = document.getElementById('header-avatar');
+    if (avatar) {
+        const iniciales = nombreGuard.split(' ').filter(Boolean).slice(0, 2).map(p => p[0].toUpperCase()).join('');
+        avatar.textContent = iniciales || '?';
+    }
 
-        document.getElementById("modalContenido").innerHTML = `
-            <div class="space-y-3">
+    // Fecha
+    const fechaEl = document.getElementById('fecha-hoy');
+    if (fechaEl) {
+        const hoy = new Date();
+        const fechaStr = hoy.toLocaleDateString('es-CL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        fechaEl.textContent = fechaStr.charAt(0).toUpperCase() + fechaStr.slice(1);
+    }
 
-                <p><strong>Funcionario:</strong> ${fila.dataset.funcionario}</p>
-                <p><strong>Alumnos:</strong> ${fila.dataset.alumnos}</p>
-                <p><strong>Fecha:</strong> ${fila.dataset.fecha}</p>
+    document.querySelectorAll("tbody tr").forEach(fila => {
+        fila.addEventListener("click", (e) => {
+            if (e.target.tagName === "BUTTON" || e.target.tagName === "TEXTAREA") {
+                return;
+            }
 
-                <div>
-                    <label class="block font-semibold mb-1">Estado:</label>
-                    <select id="modal-estado" class="w-full border border-gray-300 rounded p-2 text-sm">
-                        <option value="abierto" ${fila.dataset.estado === 'abierto' ? 'selected' : ''}>Abierto</option>
-                        <option value="en proceso" ${fila.dataset.estado === 'en proceso' ? 'selected' : ''}>En proceso</option>
-                        <option value="cerrado" ${fila.dataset.estado === 'cerrado' ? 'selected' : ''}>Cerrado</option>
-                    </select>
+            const id = fila.dataset.id;
+            document.getElementById("modalTitulo").textContent = "Conflicto #" + id;
+
+            document.getElementById("modalContenido").innerHTML = `
+                <div class="space-y-3">
+                    <p><strong>Funcionario:</strong> ${fila.dataset.funcionario}</p>
+                    <p><strong>Alumnos:</strong> ${fila.dataset.alumnos}</p>
+                    <p><strong>Fecha:</strong> ${fila.dataset.fecha}</p>
+
+                    <div>
+                        <label class="block font-semibold mb-1">Estado:</label>
+                        <select id="modal-estado" class="w-full border border-gray-300 rounded p-2 text-sm">
+                            <option value="abierto" ${fila.dataset.estado === 'abierto' ? 'selected' : ''}>Abierto</option>
+                            <option value="en proceso" ${fila.dataset.estado === 'en proceso' ? 'selected' : ''}>En proceso</option>
+                            <option value="cerrado" ${fila.dataset.estado === 'cerrado' ? 'selected' : ''}>Cerrado</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold mb-1">Descripción:</label>
+                        <textarea id="modal-descripcion" rows="4" class="w-full border border-gray-300 rounded p-2 text-sm">${fila.dataset.descripcion}</textarea>
+                    </div>
+
+                    <div id="modal-mensaje" class="hidden text-sm font-medium"></div>
+
+                    <button id="guardarCambios" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded font-medium">
+                        Guardar Cambios
+                    </button>
                 </div>
+            `;
 
-                <div>
-                    <label class="block font-semibold mb-1">Descripción:</label>
-                    <textarea id="modal-descripcion" rows="4" class="w-full border border-gray-300 rounded p-2 text-sm">${fila.dataset.descripcion}</textarea>
-                </div>
+            document.getElementById("modal").classList.remove("hidden");
 
-                <div id="modal-mensaje" class="hidden text-sm font-medium"></div>
+            document.getElementById("guardarCambios").addEventListener("click", () => {
+                const nuevaDescripcion = document.getElementById("modal-descripcion").value.trim();
+                const nuevoEstado = document.getElementById("modal-estado").value;
+                const msgDiv = document.getElementById("modal-mensaje");
 
-                <button id="guardarCambios"
-                        class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded font-medium">
-                    Guardar Cambios
-                </button>
-
-            </div>
-        `;
-
-        document.getElementById("modal").classList.remove("hidden");
-
-        document.getElementById("guardarCambios").addEventListener("click", () => {
-            const nuevaDescripcion = document.getElementById("modal-descripcion").value.trim();
-            const nuevoEstado = document.getElementById("modal-estado").value;
-            const msgDiv = document.getElementById("modal-mensaje");
-
-            fetch('editar_conflicto.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id_conflicto: id,
-                    descripcion: nuevaDescripcion,
-                    estado: nuevoEstado
+                fetch('editar_conflicto.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id_conflicto: id, descripcion: nuevaDescripcion, estado: nuevoEstado })
                 })
-            })
-            .then(res => res.json())
-            .then(data => {
-                msgDiv.classList.remove('hidden');
-                if (data.exito) {
-                    msgDiv.className = 'text-sm font-medium text-emerald-600';
-                    msgDiv.textContent = '✓ ' + data.mensaje;
-                    setTimeout(() => location.reload(), 800);
-                } else {
+                .then(res => res.json())
+                .then(data => {
+                    msgDiv.classList.remove('hidden');
+                    if (data.exito) {
+                        msgDiv.className = 'text-sm font-medium text-emerald-600';
+                        msgDiv.textContent = '✓ ' + data.mensaje;
+                        setTimeout(() => location.reload(), 800);
+                    } else {
+                        msgDiv.className = 'text-sm font-medium text-rose-600';
+                        msgDiv.textContent = '✗ ' + data.mensaje;
+                    }
+                })
+                .catch(() => {
+                    msgDiv.classList.remove('hidden');
                     msgDiv.className = 'text-sm font-medium text-rose-600';
-                    msgDiv.textContent = '✗ ' + data.mensaje;
-                }
-            })
-            .catch(() => {
-                msgDiv.classList.remove('hidden');
-                msgDiv.className = 'text-sm font-medium text-rose-600';
-                msgDiv.textContent = '✗ Error al conectar con el servidor.';
+                    msgDiv.textContent = '✗ Error al conectar con el servidor.';
+                });
             });
         });
-
     });
 
-});
-
-document.getElementById("cerrarModal").addEventListener("click", () => {
-    document.getElementById("modal").classList.add("hidden");
-});
-
-document.getElementById("modal").addEventListener("click", (e) => {
-    if (e.target.id === "modal") {
-        document.getElementById("modal").classList.add("hidden");
+    document.getElementById("cerrarModal").addEventListener("click", () => document.getElementById("modal").classList.add("hidden"));
+    document.getElementById("modal").addEventListener("click", (e) => { if (e.target.id === "modal") document.getElementById("modal").classList.add("hidden"); });
+    
+    // Cerrar sesión
+    const btnSalir = document.getElementById('btn-cerrar-sesion');
+    if (btnSalir) {
+        btnSalir.addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        });
     }
 });
 </script>

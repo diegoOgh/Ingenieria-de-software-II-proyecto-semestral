@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Woldo | Panel Principal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .hidden { display: none !important; }
+        .fuente-woldo { font-family: 'Nunito', sans-serif; font-weight: 800; }
+        body { font-family: 'Inter', sans-serif; background-color: #F0F2F5; }
+
+        .metric-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+        }
+        .metric-card.red::before   { background: #EF4444; }
+        .metric-card.amber::before { background: #F59E0B; }
+        .metric-card.green::before { background: #22C55E; }
+
+        .metric-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #6B7280;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .metric-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dot-red   { background: #EF4444; }
+        .dot-amber { background: #F59E0B; }
+        .dot-green { background: #22C55E; }
+
+        .metric-value {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1;
+}
+        .metric-sub {
+            font-size: 11px;
+            color: #9CA3AF;
+            margin-top: 5px;
+        }
+
+        .conflict-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #E4E7ED;
+            padding: 16px 18px;
+            display: flex;
+            align-items: flex-start;
+            padding: 22px 24px;
+            gap: 18px;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            cursor: pointer;
+        }
+        .conflict-card:hover {
+            border-color: #BFDBFE;
+            box-shadow: 0 2px 10px rgba(59,130,246,0.06);
+        }
+        .conflict-card.borde-red   { border-left: 3px solid #EF4444; border-radius: 0 12px 12px 0; }
+        .conflict-card.borde-amber { border-left: 3px solid #F59E0B; border-radius: 0 12px 12px 0; }
+        .conflict-card.borde-blue  { border-left: 3px solid #3B82F6; border-radius: 0 12px 12px 0; }
+
+        .conflict-icon {
+            width: 36px; height: 36px;
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 17px;
+            flex-shrink: 0;
+        }
+        .ic-red   { background: #FEE2E2; }
+        .ic-amber { background: #FEF3C7; }
+        .ic-blue  { background: #DBEAFE; }
+        .ic-gray  { background: #F3F4F6; }
+
+        .conflict-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .conflict-meta {
+            font-size: 12px;
+            color: #6B7280;
+            margin-top: 3px;
+        }
+        .conflict-footer {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 9px;
+            border-radius: 20px;
+            letter-spacing: 0.03em;
+        }
+        .badge-red   { background: #FEE2E2; color: #B91C1C; }
+        .badge-amber { background: #FEF3C7; color: #92400E; }
+        .badge-blue  { background: #DBEAFE; color: #1D4ED8; }
+        .badge-gray  { background: #F3F4F6; color: #6B7280; }
+
+        .alert-banner {
+            background: #FFF7ED;
+            border: 1px solid #FED7AA;
+            border-radius: 10px;
+            padding: 11px 15px;
+            font-size: 12.5px;
+            color: #92400E;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 14px;
+        }
+
+        .section-eyebrow {
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #9CA3AF;
+            margin-bottom: 12px;
+        }
+
+        .btn-ver {
+            font-size: 12px;
+            font-weight: 600;
+            color: #2563EB;
+            background: #EFF6FF;
+            border-radius: 7px;
+            padding: 4px 12px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-ver:hover { background: #DBEAFE; }
+
+        .btn-nuevo {
+            background: #2563EB;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 9px 18px;
+            border-radius: 9px;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            transition: background 0.15s;
+            box-shadow: 0 1px 4px rgba(37,99,235,0.2);
+        }
+        .btn-nuevo:hover { background: #1D4ED8; }
+
+        .btn-nav {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.9);
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.35);
+            border-radius: 8px;
+            padding: 7px 15px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .btn-nav:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.6);
+        }
+
+        .btn-logout {
+            font-size: 13px;
+            font-weight: 400;
+            color: rgba(255,255,255,0.65);
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.15s, background 0.15s;
+        }
+        .btn-logout:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 1px solid rgba(255,255,255,0.2);
+            padding-left: 16px;
+            margin-left: 4px;
+        }
+        .header-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+            letter-spacing: 0.01em;
+        }
+        .header-user-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.2;
+        }
+        .header-user-role {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .welcome-strip {
+            background: #fff;
+            border-bottom: 1px solid #E4E7ED;
+            padding: 14px 0;
+        }
+        .welcome-inner {
+            max-width: 64rem;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .welcome-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+        }
+        .welcome-role {
+            font-size: 12px;
+            color: #6B7280;
+            margin-top: 1px;
+        }
+
+        #lista-conflictos .bg-white {
+            background: #fff;
+            border-radius: 12px !important;
+            border: 1px solid #E4E7ED !important;
+            padding: 14px 16px !important;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: border-color 0.15s;
+        }
+        #lista-conflictos .bg-white:hover {
+            border-color: #BFDBFE !important;
+        }
+        #lista-conflictos h3 {
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            color: #111827 !important;
+        }
+        #lista-conflictos p {
+            font-size: 12px !important;
+            color: #6B7280 !important;
+            margin-top: 3px !important;
+        }
+        #lista-conflictos button {
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            color: #2563EB !important;
+            background: #EFF6FF !important;
+            border-radius: 7px !important;
+            padding: 4px 12px !important;
+            border: none !important;
+            cursor: pointer;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
+        #lista-conflictos button:hover { background: #DBEAFE !important; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <header class="bg-blue-700 text-white py-4 px-4 shadow-md">
+        <div class="max-w-[1400px] mx-auto flex justify-between items-center gap-6 px-2">
+
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <img src="img/logoWoldoW.png" alt="Logo Woldo" class="w-10 h-10 object-contain drop-shadow">
+                <div>
+                    <h1 class="fuente-woldo text-xl tracking-tight leading-none">WOLDO</h1>
+                    <p class="text-xs text-blue-200 uppercase tracking-wider mt-1">Panel Principal</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+
+                <a href="visualizacion.php" id="btn-visualizar" class="btn-nav hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    Ver conflictos
+                </a>
+
+                <div class="header-user">
+                    <div class="header-avatar" id="header-avatar">—</div>
+                    <div>
+                        <div class="header-user-name" id="nombre-usuario">Cargando...</div>
+                        <div class="header-user-role" id="rol-usuario"></div>
+                    </div>
+                    <button id="btn-cerrar-sesion" class="btn-logout" title="Cerrar sesión">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        Salir
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <div class="welcome-strip">
+        <div class="welcome-inner max-w-[1400px]" style="justify-content:flex-end;">
+            <div class="text-xs text-gray-400" id="fecha-hoy"></div>
+        </div>
+    </div>
+
+    <main class="flex-grow w-full max-w-[1400px] mx-auto px-6 py-10">
+
+        <section id="vista-funcionario" class="hidden space-y-6">
+
+            <div class="flex justify-between items-center">
+                <h2 class="section-eyebrow">Mis incidentes registrados</h2>
+                <button class="btn-nuevo" onclick="window.location.href='index.html'">
+                    <span style="font-size:18px;line-height:1;margin-top:-1px">+</span> Nuevo registro
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="metric-card red">
+                    <div class="metric-label"><span class="metric-dot dot-red"></span>Sin resolución</div>
+                    <div id="fun-sin-resolver" class="metric-value">—</div>
+                    <div class="metric-sub">Requieren atención</div>
+                </div>
+                <div class="metric-card amber">
+                    <div class="metric-label"><span class="metric-dot dot-amber"></span>En proceso</div>
+                    <div id="fun-en-proceso" class="metric-value">—</div>
+                    <div class="metric-sub">Con seguimiento activo</div>
+                </div>
+                <div class="metric-card green">
+                    <div class="metric-label"><span class="metric-dot dot-green"></span>Cerrados (mes)</div>
+                    <div id="fun-cerrados" class="metric-value">—</div>
+                    <div class="metric-sub">Este mes</div>
+                </div>
+            </div>
+
+            <div id="fun-empty" class="hidden bg-white border border-gray-200 rounded-xl p-10 text-center">
+                <div style="font-size:36px;margin-bottom:10px;">📋</div>
+                <p class="text-sm font-semibold text-gray-700">Sin incidentes activos</p>
+                <p class="text-xs text-gray-400 mt-1">Registra un nuevo incidente cuando sea necesario.</p>
+            </div>
+
+        </section>
+
+        <section id="vista-encargado" class="hidden">
+
+    <div class="grid grid-cols-12 gap-8">
+
+        <div class="col-span-12 lg:col-span-4 space-y-6">
+
+            <div>
+                <h2 class="section-eyebrow">Resumen del establecimiento</h2>
+
+                <div class="space-y-4">
+
+                    <div class="metric-card red">
+                        <div class="metric-label">
+                            <span class="metric-dot dot-red"></span>
+                            Sin resolución
+                        </div>
+                        <div id="enc-sin-resolver" class="metric-value">—</div>
+                        <div class="metric-sub">Requieren atención</div>
+                    </div>
+
+                    <div class="metric-card amber">
+                        <div class="metric-label">
+                            <span class="metric-dot dot-amber"></span>
+                            En proceso
+                        </div>
+                        <div id="enc-en-proceso" class="metric-value">—</div>
+                        <div class="metric-sub">Con seguimiento activo</div>
+                    </div>
+
+                    <div class="metric-card green">
+                        <div class="metric-label">
+                            <span class="metric-dot dot-green"></span>
+                            Cerrados (mes)
+                        </div>
+                        <div id="enc-cerrados" class="metric-value">—</div>
+                        <div class="metric-sub">Este mes</div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-span-12 lg:col-span-8">
+
+            <div id="contenedor-conflictos">
+
+                <div class="flex items-center justify-between mb-4">
+
+                    <h2 class="section-eyebrow mb-0">
+                        Conflictos recientes
+                    </h2>
+
+                    <a href="visualizacion.php"
+                       class="text-sm font-medium text-blue-600 hover:text-blue-700">
+                        Ver todos →
+                    </a>
+
+                </div>
+
+                <div id="banner-alerta"
+                     class="alert-banner hidden">
+                    <span style="font-size:17px;">❗</span>
+                    <span id="banner-texto"></span>
+                </div>
+
+                <div id="lista-conflictos" class="space-y-4">
+
+                    <div class="bg-white border border-gray-200 rounded-xl p-10 text-center text-sm text-gray-400">
+                        Cargando conflictos...
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+    </main>
+
+    <footer class="text-center py-4 bg-white border-t border-gray-200 text-xs text-gray-400">
+        &copy; 2026 Plataforma Woldo. Todos los derechos reservados.
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const hoy = new Date();
+        const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const fechaStr = hoy.toLocaleDateString('es-CL', opciones);
+        document.getElementById('fecha-hoy').textContent =
+            fechaStr.charAt(0).toUpperCase() + fechaStr.slice(1);
+
+        const rolUsuario  = localStorage.getItem('rol');
+        const nombreGuard = localStorage.getItem('nombre') || 'Usuario';
+        document.getElementById('nombre-usuario').textContent = nombreGuard;
+
+        const iniciales = nombreGuard
+            .split(' ')
+            .filter(Boolean)
+            .slice(0, 2)
+            .map(p => p[0].toUpperCase())
+            .join('');
+        document.getElementById('header-avatar').textContent = iniciales || '?';
+
+        if (rolUsuario === '1') {
+            document.getElementById('rol-usuario').textContent = 'Funcionario General';
+            document.getElementById('vista-funcionario').classList.remove('hidden');
+        } else if (rolUsuario === '2') {
+            document.getElementById('rol-usuario').textContent = 'Encargado de Convivencia';
+            document.getElementById('vista-encargado').classList.remove('hidden');
+            document.getElementById('btn-visualizar').classList.remove('hidden');
+        } else {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        function iconoEstado(estado) {
+            const e = (estado || '').toLowerCase();
+            if (e.includes('abierto') || e.includes('sin resoluci'))
+                return { emoji: '🔴', clase: 'borde-red', ic: 'ic-red', badge: 'badge-red', label: 'Sin resolución' };
+            if (e.includes('proceso'))
+                return { emoji: '🟡', clase: 'borde-amber', ic: 'ic-amber', badge: 'badge-amber', label: 'En proceso' };
+            return { emoji: '🔵', clase: 'borde-blue', ic: 'ic-blue', badge: 'badge-blue', label: 'Pendiente' };
+        }
+
+        fetch('obtener_estadisticas.php')
+            .then(res => res.json())
+            .then(respuesta => {
+                if (!respuesta.exito) return;
+                const s = respuesta.datos;
+
+                if (rolUsuario === '1') {
+                    document.getElementById('fun-sin-resolver').textContent = s.abiertos    ?? '0';
+                    document.getElementById('fun-en-proceso').textContent   = s.en_proceso  ?? '0';
+                    document.getElementById('fun-cerrados').textContent     = s.cerrados_mes ?? '0';
+
+                } else {
+                    document.getElementById('enc-sin-resolver').textContent = s.abiertos    ?? '0';
+                    document.getElementById('enc-en-proceso').textContent   = s.en_proceso  ?? '0';
+                    document.getElementById('enc-cerrados').textContent     = s.cerrados_mes ?? '0';
+
+                    if (s.abiertos > 0) {
+                        const banner = document.getElementById('banner-alerta');
+                        document.getElementById('banner-texto').textContent =
+                            `Últimos incidentes registrados.`;
+                        banner.classList.remove('hidden');
+                    }
+
+                    const lista = document.getElementById('lista-conflictos');
+                    if (respuesta.conflictos && respuesta.conflictos.length > 0) {
+                        lista.innerHTML = respuesta.conflictos.map(c => {
+                            const { emoji, clase, badge, label } = iconoEstado(c.estado_caso);
+                            const desc = c.descripcion
+                                ? (c.descripcion.length > 80
+                                    ? c.descripcion.slice(0, 77) + '...'
+                                    : c.descripcion)
+                                : 'Sin descripción';
+                            return `
+                            <div class="conflict-card ${clase}">
+                                <div class="conflict-icon ${clase.replace('borde-','ic-')}">${emoji}</div>
+                                <div style="flex:1;min-width:0;">
+                                    <div class="conflict-title">${desc}</div>
+                                    <div class="conflict-meta">📅 ${c.fecha ?? '—'}</div>
+                                    <div class="conflict-footer">
+                                        <span class="badge ${badge}">${label}</span>
+                                    </div>
+                                </div>
+                                <button class="btn-ver" style="flex-shrink:0;align-self:center;">Ver</button>
+                            </div>`;
+                        }).join('');
+                    } else {
+                        lista.innerHTML = `
+                        <div class="bg-white border border-gray-200 rounded-xl p-10 text-center">
+                            <div style="font-size:36px;margin-bottom:10px;">✅</div>
+                            <p class="text-sm font-semibold text-gray-700">Sin conflictos activos</p>
+                            <p class="text-xs text-gray-400 mt-1">El establecimiento no tiene incidentes pendientes.</p>
+                        </div>`;
+                    }
+                }
+            })
+            .catch(err => {
+                console.error('Error al cargar dashboard:', err);
+            });
+
+        document.getElementById('btn-cerrar-sesion').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        });
+    });
+    </script>
+
+</body>
+</html>

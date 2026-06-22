@@ -9,6 +9,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const tagsEmpty     = document.getElementById('tags-empty');
     const alumnosIds    = document.getElementById('alumnos-ids');
     const fechaInput    = document.getElementById('fecha');
+    const rolUsuario = localStorage.getItem('rol');
+    const nombreGuard = localStorage.getItem('nombre') || 'Usuario';
+
+    //nombre
+    const nomEl = document.getElementById('nombre-usuario');
+    if (nomEl) nomEl.textContent = nombreGuard;
+
+
+    //rol
+    const rolEl = document.getElementById('rol-usuario');
+    if (rolEl && rolUsuario) {
+        rolEl.textContent = (rolUsuario === '2') ? 'Encargado de Convivencia' : 'Funcionario General';
+    }
+
+    // avatar
+    const avatar = document.getElementById('header-avatar');
+    if (avatar) {
+        const iniciales = nombreGuard.split(' ').filter(Boolean).slice(0, 2).map(p => p[0].toUpperCase()).join('');
+        avatar.textContent = iniciales || '?';
+    }
+
+    // Cerrar sesión
+    const btnSalir = document.getElementById('btn-cerrar-sesion');
+    if (btnSalir) {
+        btnSalir.addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        });
+    }
 
     const funcionarioSelect = document.getElementById('funcionario-select');
 

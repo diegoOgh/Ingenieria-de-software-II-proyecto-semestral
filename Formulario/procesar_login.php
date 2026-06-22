@@ -37,13 +37,17 @@ try {
     if ($fila = $res->fetch_assoc()) {
         if ($password === $fila['contrasena']) {
             
-            // Guardar datos en la sesión
             $_SESSION['usuario_id'] = $fila['id_usuario'];
             $_SESSION['funcionario_id'] = $fila['id_funcionario'];
             $_SESSION['rol_id'] = $fila['id_rol'];
             $_SESSION['nombre_usuario'] = $fila['nombres'] . ' ' . $fila['apellidos'];
 
-            echo json_encode(['exito' => true, 'mensaje' => 'Login exitoso.']);
+            echo json_encode([
+                'exito' => true, 
+                'mensaje' => 'Login exitoso.',
+                'rol' => $fila['id_rol'], 
+                'nombre' => $fila['nombres'] . ' ' . $fila['apellidos']
+            ]);
         } else {
             echo json_encode(['exito' => false, 'mensaje' => 'Contraseña incorrecta.']);
         }
