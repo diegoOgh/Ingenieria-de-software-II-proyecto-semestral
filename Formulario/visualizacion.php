@@ -1,4 +1,11 @@
 <?php
+session_start();
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: login.html');
+    exit;
+}
+$rol_id = (int)$_SESSION['rol_id'];
+
 require_once 'conexion.php';
 
 $conn = obtenerConexion();
@@ -347,7 +354,6 @@ $resultado = $conn->query($sql);
                 </table>
             </div>
 
-
         </div>
     </main>
 
@@ -355,32 +361,20 @@ $resultado = $conn->query($sql);
         &copy; 2026 Plataforma Woldo. Todos los derechos reservados.
     </footer>
 
-
-
- 
-<div
-    id="modal"
-    class="hidden fixed inset-0 bg-black/50 flex items-center justify-center"
->
+<div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-xl max-w-2xl w-full">
-
-        <h2 id="modalTitulo"></h2>
-
+        <h2 id="modalTitulo" class="text-xl font-bold mb-4 text-gray-800"></h2>
         <div id="modalContenido"></div>
-
-        <button
-            id="cerrarModal"
-            class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-        >
+        <button id="cerrarModal" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
             Cerrar
         </button>
-
     </div>
 </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
-    const rolUsuario = localStorage.getItem('rol');
+    const rolUsuario = <?= json_encode($rol_id) ?>;
     const nombreGuard = localStorage.getItem('nombre') || 'Usuario';
     
     // Nombre
@@ -389,8 +383,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Rol
     const rolEl = document.getElementById('rol-usuario');
-    if (rolEl && rolUsuario) {
-        rolEl.textContent = (rolUsuario === '2') ? 'Encargado de Convivencia' : 'Funcionario General';
+    if (rolEl) {
+        rolEl.textContent = (rolUsuario === 2) ? 'Encargado de Convivencia' : 'Funcionario General';
     }
 
     // Avatar
@@ -410,71 +404,94 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll("tbody tr").forEach(fila => {
         fila.addEventListener("click", (e) => {
-            if (e.target.tagName === "BUTTON" || e.target.tagName === "TEXTAREA") {
+            // Prevenir abrir el modal si se clickea un botón, enlace o textarea directamente
+            if (e.target.tagName === "BUTTON" || e.target.tagName === "TEXTAREA" || e.target.tagName === "A") {
                 return;
             }
 
             const id = fila.dataset.id;
             document.getElementById("modalTitulo").textContent = "Conflicto #" + id;
 
-            document.getElementById("modalContenido").innerHTML = `
-                <div class="space-y-3">
-                    <p><strong>Funcionario:</strong> ${fila.dataset.funcionario}</p>
-                    <p><strong>Alumnos:</strong> ${fila.dataset.alumnos}</p>
-                    <p><strong>Fecha:</strong> ${fila.dataset.fecha}</p>
+            if (rolUsuario === 2) {
+                // Modal para Encargado (Rol 2) - Editable y Exportar a PDF
+                document.getElementById("modalContenido").innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <p><strong>Funcionario:</strong> ${fila.dataset.funcionario}</p>
+                            <a href="generar_pdf.php?id=${id}" target="_blank" class="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1.5 rounded text-sm font-semibold inline-flex items-center gap-1">📄 Exportar PDF</a>
+                        </div>
+                        <p><strong>Alumnos:</strong> ${fila.dataset.alumnos}</p>
+                        <p><strong>Fecha:</strong> ${fila.dataset.fecha}</p>
 
-                    <div>
-                        <label class="block font-semibold mb-1">Estado:</label>
-                        <select id="modal-estado" class="w-full border border-gray-300 rounded p-2 text-sm">
-                            <option value="abierto" ${fila.dataset.estado === 'abierto' ? 'selected' : ''}>Abierto</option>
-                            <option value="en proceso" ${fila.dataset.estado === 'en proceso' ? 'selected' : ''}>En proceso</option>
-                            <option value="cerrado" ${fila.dataset.estado === 'cerrado' ? 'selected' : ''}>Cerrado</option>
-                        </select>
+                        <div>
+                            <label class="block font-semibold mb-1">Estado:</label>
+                            <select id="modal-estado" class="w-full border border-gray-300 rounded p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="abierto" ${fila.dataset.estado === 'abierto' ? 'selected' : ''}>Abierto</option>
+                                <option value="en proceso" ${fila.dataset.estado === 'en proceso' ? 'selected' : ''}>En proceso</option>
+                                <option value="cerrado" ${fila.dataset.estado === 'cerrado' ? 'selected' : ''}>Cerrado</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold mb-1">Descripción:</label>
+                            <textarea id="modal-descripcion" rows="4" class="w-full border border-gray-300 rounded p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">${fila.dataset.descripcion}</textarea>
+                        </div>
+
+                        <div id="modal-mensaje" class="hidden text-sm font-medium"></div>
+
+                        <button id="guardarCambios" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded font-medium transition">
+                            Guardar Cambios
+                        </button>
                     </div>
+                `;
 
-                    <div>
-                        <label class="block font-semibold mb-1">Descripción:</label>
-                        <textarea id="modal-descripcion" rows="4" class="w-full border border-gray-300 rounded p-2 text-sm">${fila.dataset.descripcion}</textarea>
+                // Evento para guardar cambios
+                document.getElementById("guardarCambios").addEventListener("click", () => {
+                    const nuevaDescripcion = document.getElementById("modal-descripcion").value.trim();
+                    const nuevoEstado = document.getElementById("modal-estado").value;
+                    const msgDiv = document.getElementById("modal-mensaje");
+
+                    fetch('editar_conflicto.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id_conflicto: id, descripcion: nuevaDescripcion, estado: nuevoEstado })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        msgDiv.classList.remove('hidden');
+                        if (data.exito) {
+                            msgDiv.className = 'text-sm font-medium text-emerald-600';
+                            msgDiv.textContent = '✓ ' + data.mensaje;
+                            setTimeout(() => location.reload(), 800);
+                        } else {
+                            msgDiv.className = 'text-sm font-medium text-rose-600';
+                            msgDiv.textContent = '✗ ' + data.mensaje;
+                        }
+                    })
+                    .catch(() => {
+                        msgDiv.classList.remove('hidden');
+                        msgDiv.className = 'text-sm font-medium text-rose-600';
+                        msgDiv.textContent = '✗ Error al conectar con el servidor.';
+                    });
+                });
+            } else {
+                // Modal para Funcionario General (Rol 1) - Solo Lectura
+                document.getElementById("modalContenido").innerHTML = `
+                    <div class="space-y-3">
+                        <p><strong>Funcionario:</strong> ${fila.dataset.funcionario}</p>
+                        <p><strong>Alumnos:</strong> ${fila.dataset.alumnos}</p>
+                        <p><strong>Fecha:</strong> ${fila.dataset.fecha}</p>
+                        <p><strong>Estado:</strong> <span class="uppercase font-semibold text-xs">${fila.dataset.estado}</span></p>
+                        
+                        <div>
+                            <label class="block font-semibold mb-1">Descripción:</label>
+                            <div class="w-full border border-gray-300 rounded p-3 text-sm bg-gray-50 min-h-[5rem] whitespace-pre-wrap">${fila.dataset.descripcion}</div>
+                        </div>
                     </div>
-
-                    <div id="modal-mensaje" class="hidden text-sm font-medium"></div>
-
-                    <button id="guardarCambios" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded font-medium">
-                        Guardar Cambios
-                    </button>
-                </div>
-            `;
+                `;
+            }
 
             document.getElementById("modal").classList.remove("hidden");
-
-            document.getElementById("guardarCambios").addEventListener("click", () => {
-                const nuevaDescripcion = document.getElementById("modal-descripcion").value.trim();
-                const nuevoEstado = document.getElementById("modal-estado").value;
-                const msgDiv = document.getElementById("modal-mensaje");
-
-                fetch('editar_conflicto.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id_conflicto: id, descripcion: nuevaDescripcion, estado: nuevoEstado })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    msgDiv.classList.remove('hidden');
-                    if (data.exito) {
-                        msgDiv.className = 'text-sm font-medium text-emerald-600';
-                        msgDiv.textContent = '✓ ' + data.mensaje;
-                        setTimeout(() => location.reload(), 800);
-                    } else {
-                        msgDiv.className = 'text-sm font-medium text-rose-600';
-                        msgDiv.textContent = '✗ ' + data.mensaje;
-                    }
-                })
-                .catch(() => {
-                    msgDiv.classList.remove('hidden');
-                    msgDiv.className = 'text-sm font-medium text-rose-600';
-                    msgDiv.textContent = '✗ Error al conectar con el servidor.';
-                });
-            });
         });
     });
 
@@ -498,3 +515,4 @@ document.addEventListener('DOMContentLoaded', () => {
 <?php
 $conn->close();
 ?>
+
