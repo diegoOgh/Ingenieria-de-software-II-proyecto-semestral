@@ -1,4 +1,11 @@
 <?php
+session_start();
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: login.html');
+    exit;
+}
+$rol_id = (int)$_SESSION['rol_id'];
+
 require_once 'conexion.php';
 
 $conn = obtenerConexion();
@@ -235,6 +242,8 @@ $resultado = $conn->query($sql);
                     </tbody>
                 </table>
             </div>
+
+
         </div>
     </main>
 
@@ -242,37 +251,42 @@ $resultado = $conn->query($sql);
         &copy; 2026 Plataforma Woldo. Todos los derechos reservados.
     </footer>
 
-<div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-100">
-        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
-            <h2 id="modalTitulo" class="text-xl font-bold text-gray-800"></h2>
-            <button id="cerrarModalX" class="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
-        </div>
-        
-        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6" id="modalContenido"></div>
 
-        <div class="p-4 bg-gray-50 border-t border-gray-100 flex justify-end rounded-b-2xl">
-            <button id="cerrarModal" class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg font-medium text-sm transition">
-                Cerrar Ventana
-            </button>
-        </div>
+
+ 
+<div
+    id="modal"
+    class="hidden fixed inset-0 bg-black/50 flex items-center justify-center"
+>
+    <div class="bg-white p-6 rounded-xl max-w-2xl w-full">
+
+        <h2 id="modalTitulo"></h2>
+
+        <div id="modalContenido"></div>
+
+        <button
+            id="cerrarModal"
+            class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        >
+            Cerrar
+        </button>
+
     </div>
 </div>
-
-<div id="lightbox" class="hidden fixed inset-0 bg-black/80 flex flex-col items-center justify-center z-[100] p-4">
-    <button id="cerrarLightbox" class="absolute top-6 right-6 text-white text-4xl font-bold hover:text-gray-300 transition">&times;</button>
-    <img id="lightboxImagen" src="" alt="Evidencia gigante" class="max-w-full max-h-[80vh] rounded-lg shadow-2xl object-contain border border-white/10">
-    <p id="lightboxTexto" class="text-white mt-4 text-sm font-medium tracking-wide bg-black/40 px-4 py-1.5 rounded-full"></p>
-</div>
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const nombreGuard = localStorage.getItem('nombre') || 'Usuario';
+
     const rolUsuario = localStorage.getItem('rol');
+    const nombreGuard = localStorage.getItem('nombre') || 'Usuario';
     
-    if (document.getElementById('nombre-usuario')) document.getElementById('nombre-usuario').textContent = nombreGuard;
-    if (document.getElementById('rol-usuario') && rolUsuario) {
-        document.getElementById('rol-usuario').textContent = (rolUsuario === '2') ? 'Encargado de Convivencia' : 'Funcionario General';
+    // Nombre
+    const nomEl = document.getElementById('nombre-usuario');
+    if (nomEl) nomEl.textContent = nombreGuard;
+
+    // Rol
+    const rolEl = document.getElementById('rol-usuario');
+    if (rolEl && rolUsuario) {
+        rolEl.textContent = (rolUsuario === '2') ? 'Encargado de Convivencia' : 'Funcionario General';
     }
 
     if (document.getElementById('header-avatar')) {
@@ -282,22 +296,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll("tbody tr").forEach(fila => {
         fila.addEventListener("click", (e) => {
-            if (e.target.tagName === "BUTTON" || e.target.tagName === "TEXTAREA" || e.target.tagName === "INPUT" || e.target.closest('.group')) return;
+            if (e.target.tagName === "BUTTON" || e.target.tagName === "TEXTAREA") {
+                return;
+            }
 
             const id = fila.dataset.id;
             document.getElementById("modalTitulo").textContent = "Gestión de Conflicto #" + id;
 
-            // Renderizamos la interfaz dividida en dos columnas en el modal
             document.getElementById("modalContenido").innerHTML = `
-                <div class="space-y-4 border-r border-gray-100 pr-0 md:pr-6">
-                    <h3 class="text-sm font-semibold text-blue-700 uppercase tracking-wider">Detalles del Caso</h3>
-                    <p class="text-sm text-gray-600"><strong>Funcionario:</strong> ${fila.dataset.funcionario}</p>
-                    <p class="text-sm text-gray-600"><strong>Alumnos:</strong> ${fila.dataset.alumnos}</p>
-                    <p class="text-sm text-gray-600"><strong>Fecha:</strong> ${fila.dataset.fecha}</p>
+                <div class="space-y-3">
+                    <p><strong>Funcionario:</strong> ${fila.dataset.funcionario}</p>
+                    <p><strong>Alumnos:</strong> ${fila.dataset.alumnos}</p>
+                    <p><strong>Fecha:</strong> ${fila.dataset.fecha}</p>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Estado:</label>
-                        <select id="modal-estado" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        <label class="block font-semibold mb-1">Estado:</label>
+                        <select id="modal-estado" class="w-full border border-gray-300 rounded p-2 text-sm">
                             <option value="abierto" ${fila.dataset.estado === 'abierto' ? 'selected' : ''}>Abierto</option>
                             <option value="en proceso" ${fila.dataset.estado === 'en proceso' ? 'selected' : ''}>En proceso</option>
                             <option value="cerrado" ${fila.dataset.estado === 'cerrado' ? 'selected' : ''}>Cerrado</option>
@@ -305,110 +319,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción:</label>
-                        <textarea id="modal-descripcion" rows="4" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">${fila.dataset.descripcion}</textarea>
+                        <label class="block font-semibold mb-1">Descripción:</label>
+                        <textarea id="modal-descripcion" rows="4" class="w-full border border-gray-300 rounded p-2 text-sm">${fila.dataset.descripcion}</textarea>
                     </div>
 
-                    <div id="modal-mensaje" class="hidden text-sm font-medium p-2 rounded"></div>
+                    <div id="modal-mensaje" class="hidden text-sm font-medium"></div>
 
-                    <button id="guardarCambios" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg font-medium text-sm transition shadow">
-                        Actualizar Conflicto
+                    <button id="guardarCambios" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded font-medium">
+                        Guardar Cambios
                     </button>
-                </div>
-
-                <div class="space-y-4 flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-sm font-semibold text-blue-700 uppercase tracking-wider mb-3">Imágenes de Evidencia</h3>
-                        
-                        <div class="bg-gray-50 border border-dashed border-gray-300 rounded-xl p-4 text-center">
-                            <input type="file" id="evidencia-file" accept="image/*" class="hidden">
-                            <label id="label-file" for="evidencia-file" class="cursor-pointer text-sm text-blue-600 hover:text-blue-800 font-medium block py-2">
-                                📁 Seleccionar o arrastrar imagen
-                            </label>
-                            <span id="file-name" class="text-xs text-gray-400 block mt-1 italic">Ningún archivo seleccionado</span>
-                            
-                            <button id="btnSubirEvidencia" class="mt-3 bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-1.5 rounded-md font-medium transition disabled:bg-gray-400" disabled>
-                                Subir Archivo
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="evidencia-mensaje" class="hidden text-xs font-medium p-2 rounded"></div>
-                    
-                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex-grow min-h-[150px]">
-                        <span class="text-xs font-semibold text-gray-500 block mb-2">Imágenes en el servidor:</span>
-                        <div id="lista-imagenes-galeria" class="grid grid-cols-3 gap-2">
-                            <p class="text-xs text-gray-400 italic col-span-3">Cargando galería local...</p>
-                        </div>
-                    </div>
                 </div>
             `;
 
             document.getElementById("modal").classList.remove("hidden");
 
-            // --- LÓGICA INTERNA PARA CONTROLAR LA GALERÍA LOCAL ---
-            const cargarGaleriaLocal = () => {
-                const galeriaDiv = document.getElementById("lista-imagenes-galeria");
-                if (!galeriaDiv) return;
-
-                // Usamos './' explícito para asegurar la raíz del directorio actual
-                fetch(`./obtener_evidencias.php?id_conflicto=${id}`)
-                    .then(res => {
-                        if (!res.ok) {
-                            throw new Error(`Error en el servidor: ${res.status}`);
-                        }
-                        return res.json();
-                    })
-                    .then(imagenes => {
-                        // Validar que la respuesta sea un arreglo válido
-                        if (!Array.isArray(imagenes) || imagenes.length === 0) {
-                            galeriaDiv.innerHTML = '<p class="text-xs text-gray-400 italic col-span-3">No hay evidencias guardadas aún.</p>';
-                            return;
-                        }
-
-                        // Renderizar la galería
-                        galeriaDiv.innerHTML = '';
-                        imagenes.forEach(img => {
-                            const contenedor = document.createElement('div');
-                            contenedor.className = "group relative border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm hover:shadow transition cursor-pointer";
-                            contenedor.innerHTML = `
-                                <img src="${img.ruta}" alt="${img.nombre}" class="w-full h-16 object-cover" onerror="this.onerror=null; this.src='img/placeholder.png';">
-                                <span class="absolute bottom-0 inset-x-0 bg-black/60 text-[9px] text-white text-center truncate py-0.5 group-hover:bg-blue-600 transition">
-                                    ${img.nombre}
-                                </span>
-                            `;
-                            
-                            contenedor.addEventListener('click', (e) => {
-                                e.stopPropagation();
-                                abrirImagenGrande(img.ruta, img.nombre);
-                            });
-                            galeriaDiv.appendChild(contenedor);
-                        });
-                    })
-                    .catch(err => {
-                        console.error("Error al cargar evidencias:", err);
-                        // Si falla la petición, cambiamos el texto de carga por un aviso de error
-                        galeriaDiv.innerHTML = '<p class="text-xs text-red-500 font-medium col-span-3">❌ Error al conectar con el servidor de imágenes.</p>';
-                    });
-            };
-
-            // Cargar miniaturas al abrir el modal
-            cargarGaleriaLocal();
-
-            const fileInput = document.getElementById("evidencia-file");
-            const fileNameSpan = document.getElementById("file-name");
-            const btnSubir = document.getElementById("btnSubirEvidencia");
-
-            fileInput.addEventListener("change", () => {
-                if(fileInput.files.length > 0) {
-                    fileNameSpan.textContent = fileInput.files[0].name;
-                    fileNameSpan.classList.remove("text-gray-400");
-                    fileNameSpan.classList.add("text-gray-700", "font-medium");
-                    btnSubir.removeAttribute("disabled");
-                }
-            });
-
-            // Guardar cambios del formulario principal
             document.getElementById("guardarCambios").addEventListener("click", () => {
                 const nuevaDescripcion = document.getElementById("modal-descripcion").value.trim();
                 const nuevoEstado = document.getElementById("modal-estado").value;
@@ -423,58 +347,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(data => {
                     msgDiv.classList.remove('hidden');
                     if (data.exito) {
-                        msgDiv.className = 'text-sm font-medium text-emerald-600 p-2 bg-emerald-50 rounded';
+                        msgDiv.className = 'text-sm font-medium text-emerald-600';
                         msgDiv.textContent = '✓ ' + data.mensaje;
                         setTimeout(() => location.reload(), 800);
                     } else {
-                        msgDiv.className = 'text-sm font-medium text-rose-600 p-2 bg-rose-50 rounded';
+                        msgDiv.className = 'text-sm font-medium text-rose-600';
                         msgDiv.textContent = '✗ ' + data.mensaje;
                     }
-                }).catch(() => {
-                    msgDiv.classList.remove('hidden');
-                    msgDiv.className = 'text-sm font-medium text-rose-600 p-2 bg-rose-50 rounded';
-                    msgDiv.textContent = '✗ Error al conectar con el servidor.';
-                });
-            });
-
-            // Subir archivo de Evidencia de forma asíncrona
-            btnSubir.addEventListener("click", () => {
-                const evMsg = document.getElementById("evidencia-mensaje");
-                const formData = new FormData();
-                
-                formData.append("id_conflicto", id);
-                formData.append("evidencia", fileInput.files[0]);
-
-                btnSubir.setAttribute("disabled", "true");
-                btnSubir.textContent = "Subiendo...";
-
-                fetch('subir_evidencia.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(res => res.json())
-                .then(data => {
-                    evMsg.classList.remove("hidden");
-                    if(data.exito) {
-                        evMsg.className = "text-xs font-medium text-emerald-600 p-2 bg-emerald-50 rounded";
-                        evMsg.textContent = "✓ " + data.mensaje;
-                        fileInput.value = "";
-                        fileNameSpan.textContent = "Ningún archivo seleccionado";
-                        fileNameSpan.className = "text-xs text-gray-400 block mt-1 italic";
-                        cargarGaleriaLocal(); // <--- RECARGA LA GALERÍA LOCAL DE INMEDIATO
-                    } else {
-                        evMsg.className = "text-xs font-medium text-rose-600 p-2 bg-rose-50 rounded";
-                        evMsg.textContent = "✗ " + data.mensaje;
-                        btnSubir.removeAttribute("disabled");
-                    }
-                    btnSubir.textContent = "Subir Archivo";
                 })
                 .catch(() => {
-                    evMsg.classList.remove("hidden");
-                    evMsg.className = "text-xs font-medium text-rose-600 p-2 bg-rose-50 rounded";
-                    evMsg.textContent = "✗ Error de red al procesar la imagen.";
-                    btnSubir.removeAttribute("disabled");
-                    btnSubir.textContent = "Subir Archivo";
+                    msgDiv.classList.remove('hidden');
+                    msgDiv.className = 'text-sm font-medium text-rose-600';
+                    msgDiv.textContent = '✗ Error al conectar con el servidor.';
                 });
             });
         });
@@ -508,4 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-<?php $conn->close(); ?>
+
+<?php
+$conn->close();
+?>
