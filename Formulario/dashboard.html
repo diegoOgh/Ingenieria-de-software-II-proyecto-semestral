@@ -12,12 +12,14 @@
         body { font-family: 'Inter', sans-serif; background-color: #F0F2F5; }
 
         .metric-card {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 24px;
-    border: 1px solid #E5E7EB;
-    box-shadow: 0 1px 2px rgba(0,0,0,.04);
-}
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 1px 2px rgba(0,0,0,.04);
+            position: relative;
+            overflow: hidden;
+        }
         .metric-card::before {
             content: '';
             position: absolute;
@@ -49,10 +51,10 @@
         .dot-green { background: #22C55E; }
 
         .metric-value {
-    font-size: 48px;
-    font-weight: 800;
-    line-height: 1;
-}
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1;
+        }
         .metric-sub {
             font-size: 11px;
             color: #9CA3AF;
@@ -63,7 +65,6 @@
             background: #fff;
             border-radius: 12px;
             border: 1px solid #E4E7ED;
-            padding: 16px 18px;
             display: flex;
             align-items: flex-start;
             padding: 22px 24px;
@@ -89,7 +90,6 @@
         .ic-red   { background: #FEE2E2; }
         .ic-amber { background: #FEF3C7; }
         .ic-blue  { background: #DBEAFE; }
-        .ic-gray  { background: #F3F4F6; }
 
         .conflict-title {
             font-size: 14px;
@@ -119,7 +119,6 @@
         .badge-red   { background: #FEE2E2; color: #B91C1C; }
         .badge-amber { background: #FEF3C7; color: #92400E; }
         .badge-blue  { background: #DBEAFE; color: #1D4ED8; }
-        .badge-gray  { background: #F3F4F6; color: #6B7280; }
 
         .alert-banner {
             background: #FFF7ED;
@@ -188,10 +187,7 @@
             gap: 6px;
             transition: background 0.15s, border-color 0.15s;
         }
-        .btn-nav:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.6);
-        }
+        .btn-nav:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.6); }
 
         .btn-logout {
             font-size: 13px;
@@ -207,10 +203,7 @@
             gap: 5px;
             transition: color 0.15s, background 0.15s;
         }
-        .btn-logout:hover {
-            color: #fff;
-            background: rgba(255,255,255,0.1);
-        }
+        .btn-logout:hover { color: #fff; background: rgba(255,255,255,0.1); }
 
         .header-user {
             display: flex;
@@ -221,97 +214,24 @@
             margin-left: 4px;
         }
         .header-avatar {
-            width: 34px;
-            height: 34px;
+            width: 34px; height: 34px;
             border-radius: 50%;
             background: rgba(255,255,255,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 700;
-            color: #fff;
-            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
             letter-spacing: 0.01em;
         }
-        .header-user-name {
-            font-size: 13px;
-            font-weight: 600;
-            color: #fff;
-            line-height: 1.2;
-        }
-        .header-user-role {
-            font-size: 11px;
-            color: rgba(255,255,255,0.6);
-        }
+        .header-user-name { font-size: 13px; font-weight: 600; color: #fff; line-height: 1.2; }
+        .header-user-role { font-size: 11px; color: rgba(255,255,255,0.6); }
 
-        .welcome-strip {
-            background: #fff;
-            border-bottom: 1px solid #E4E7ED;
-            padding: 14px 0;
-        }
-        .welcome-inner {
-            max-width: 64rem;
-            margin: 0 auto;
-            padding: 0 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .welcome-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #111827;
-        }
-        .welcome-role {
-            font-size: 12px;
-            color: #6B7280;
-            margin-top: 1px;
-        }
-
-        #lista-conflictos .bg-white {
-            background: #fff;
-            border-radius: 12px !important;
-            border: 1px solid #E4E7ED !important;
-            padding: 14px 16px !important;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: border-color 0.15s;
-        }
-        #lista-conflictos .bg-white:hover {
-            border-color: #BFDBFE !important;
-        }
-        #lista-conflictos h3 {
-            font-size: 14px !important;
-            font-weight: 600 !important;
-            color: #111827 !important;
-        }
-        #lista-conflictos p {
-            font-size: 12px !important;
-            color: #6B7280 !important;
-            margin-top: 3px !important;
-        }
-        #lista-conflictos button {
-            font-size: 12px !important;
-            font-weight: 600 !important;
-            color: #2563EB !important;
-            background: #EFF6FF !important;
-            border-radius: 7px !important;
-            padding: 4px 12px !important;
-            border: none !important;
-            cursor: pointer;
-            transition: background 0.15s;
-            flex-shrink: 0;
-        }
-        #lista-conflictos button:hover { background: #DBEAFE !important; }
+        .welcome-strip { background: #fff; border-bottom: 1px solid #E4E7ED; padding: 14px 0; }
+        .welcome-inner { max-width: 64rem; margin: 0 auto; padding: 0 1rem; display: flex; align-items: center; justify-content: space-between; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
     <header class="bg-blue-700 text-white py-4 px-4 shadow-md">
         <div class="max-w-[1400px] mx-auto flex justify-between items-center gap-6 px-2">
-
             <div class="flex items-center gap-3 flex-shrink-0">
                 <img src="img/logoWoldoW.png" alt="Logo Woldo" class="w-10 h-10 object-contain drop-shadow">
                 <div>
@@ -319,14 +239,11 @@
                     <p class="text-xs text-blue-200 uppercase tracking-wider mt-1">Panel Principal</p>
                 </div>
             </div>
-
             <div class="flex items-center gap-3">
-
                 <a href="visualizacion.php" id="btn-visualizar" class="btn-nav hidden">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
                     Ver conflictos
                 </a>
-
                 <div class="header-user">
                     <div class="header-avatar" id="header-avatar">—</div>
                     <div>
@@ -339,7 +256,6 @@
                     </button>
                 </div>
             </div>
-
         </div>
     </header>
 
@@ -352,121 +268,75 @@
     <main class="flex-grow w-full max-w-[1400px] mx-auto px-6 py-10">
 
         <section id="vista-funcionario" class="hidden space-y-6">
-
             <div class="flex justify-between items-center">
                 <h2 class="section-eyebrow">Mis incidentes registrados</h2>
                 <button class="btn-nuevo" onclick="window.location.href='index.php'">
                     <span style="font-size:18px;line-height:1;margin-top:-1px">+</span> Nuevo registro
                 </button>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="metric-card red">
+                <div class="metric-card red cursor-pointer hover:border-red-300 transition-all duration-200" onclick="abrirModalListado('abierto')">
                     <div class="metric-label"><span class="metric-dot dot-red"></span>Sin resolución</div>
                     <div id="fun-sin-resolver" class="metric-value">—</div>
                     <div class="metric-sub">Requieren atención</div>
                 </div>
-                <div class="metric-card amber">
+                <div class="metric-card amber cursor-pointer hover:border-amber-300 transition-all duration-200" onclick="abrirModalListado('en proceso')">
                     <div class="metric-label"><span class="metric-dot dot-amber"></span>En proceso</div>
                     <div id="fun-en-proceso" class="metric-value">—</div>
                     <div class="metric-sub">Con seguimiento activo</div>
                 </div>
-                <div class="metric-card green">
+                <div class="metric-card green cursor-pointer hover:border-green-300 transition-all duration-200" onclick="abrirModalListado('cerrado')">
                     <div class="metric-label"><span class="metric-dot dot-green"></span>Cerrados (mes)</div>
                     <div id="fun-cerrados" class="metric-value">—</div>
                     <div class="metric-sub">Este mes</div>
                 </div>
             </div>
-
-            <div id="fun-empty" class="hidden bg-white border border-gray-200 rounded-xl p-10 text-center">
-                <div style="font-size:36px;margin-bottom:10px;">📋</div>
-                <p class="text-sm font-semibold text-gray-700">Sin incidentes activos</p>
-                <p class="text-xs text-gray-400 mt-1">Registra un nuevo incidente cuando sea necesario.</p>
-            </div>
-
         </section>
 
         <section id="vista-encargado" class="hidden">
-
-    <div class="grid grid-cols-12 gap-8">
-
-        <div class="col-span-12 lg:col-span-4 space-y-6">
-
-            <div>
-                <h2 class="section-eyebrow">Resumen del establecimiento</h2>
-
-                <div class="space-y-4">
-
-                    <div class="metric-card red">
-                        <div class="metric-label">
-                            <span class="metric-dot dot-red"></span>
-                            Sin resolución
+            <div class="grid grid-cols-12 gap-8">
+                <div class="col-span-12 lg:col-span-4 space-y-6">
+                    <div>
+                        <h2 class="section-eyebrow">Resumen del establecimiento</h2>
+                        <div class="space-y-4">
+                            <div class="metric-card red cursor-pointer hover:border-red-300 hover:shadow-md transition-all duration-200" onclick="abrirModalListado('abierto')">
+                                <div class="metric-label"><span class="metric-dot dot-red"></span>Sin resolución</div>
+                                <div id="enc-sin-resolver" class="metric-value">—</div>
+                                <div class="metric-sub">Requieren atención (Clic para ver)</div>
+                            </div>
+                            <div class="metric-card amber cursor-pointer hover:border-amber-300 hover:shadow-md transition-all duration-200" onclick="abrirModalListado('en proceso')">
+                                <div class="metric-label"><span class="metric-dot dot-amber"></span>En proceso</div>
+                                <div id="enc-en-proceso" class="metric-value">—</div>
+                                <div class="metric-sub">Con seguimiento activo (Clic para ver)</div>
+                            </div>
+                            <div class="metric-card green cursor-pointer hover:border-green-300 hover:shadow-md transition-all duration-200" onclick="abrirModalListado('cerrado')">
+                                <div class="metric-label"><span class="metric-dot dot-green"></span>Cerrados (mes)</div>
+                                <div id="enc-cerrados" class="metric-value">—</div>
+                                <div class="metric-sub">Este mes (Clic para ver)</div>
+                            </div>
                         </div>
-                        <div id="enc-sin-resolver" class="metric-value">—</div>
-                        <div class="metric-sub">Requieren atención</div>
                     </div>
+                </div>
 
-                    <div class="metric-card amber">
-                        <div class="metric-label">
-                            <span class="metric-dot dot-amber"></span>
-                            En proceso
+                <div class="col-span-12 lg:col-span-8">
+                    <div id="contenedor-conflictos">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="section-eyebrow mb-0">Conflictos recientes</h2>
+                            <a href="visualizacion.php" class="text-sm font-medium text-blue-600 hover:text-blue-700">Ver todos →</a>
                         </div>
-                        <div id="enc-en-proceso" class="metric-value">—</div>
-                        <div class="metric-sub">Con seguimiento activo</div>
-                    </div>
-
-                    <div class="metric-card green">
-                        <div class="metric-label">
-                            <span class="metric-dot dot-green"></span>
-                            Cerrados (mes)
+                        <div id="banner-alerta" class="alert-banner hidden">
+                            <span style="font-size:17px;">❗</span>
+                            <span id="banner-texto"></span>
                         </div>
-                        <div id="enc-cerrados" class="metric-value">—</div>
-                        <div class="metric-sub">Este mes</div>
+                        <div id="lista-conflictos" class="space-y-4">
+                            <div class="bg-white border border-gray-200 rounded-xl p-10 text-center text-sm text-gray-400">
+                                Cargando conflictos...
+                            </div>
+                        </div>
                     </div>
-
                 </div>
             </div>
-
-        </div>
-
-        <div class="col-span-12 lg:col-span-8">
-
-            <div id="contenedor-conflictos">
-
-                <div class="flex items-center justify-between mb-4">
-
-                    <h2 class="section-eyebrow mb-0">
-                        Conflictos recientes
-                    </h2>
-
-                    <a href="visualizacion.php"
-                       class="text-sm font-medium text-blue-600 hover:text-blue-700">
-                        Ver todos →
-                    </a>
-
-                </div>
-
-                <div id="banner-alerta"
-                     class="alert-banner hidden">
-                    <span style="font-size:17px;">❗</span>
-                    <span id="banner-texto"></span>
-                </div>
-
-                <div id="lista-conflictos" class="space-y-4">
-
-                    <div class="bg-white border border-gray-200 rounded-xl p-10 text-center text-sm text-gray-400">
-                        Cargando conflictos...
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
+        </section>
 
     </main>
 
@@ -474,25 +344,33 @@
         &copy; 2026 Plataforma Woldo. Todos los derechos reservados.
     </footer>
 
+    <div id="modal-listado" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] flex flex-col overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/80">
+                <h3 id="modal-titulo" class="text-lg font-bold text-gray-800">Listado de Incidentes</h3>
+                <button onclick="cerrarModalListado()" class="text-gray-400 hover:text-red-500 transition-colors bg-white rounded-full p-1 border border-gray-200">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-grow bg-white">
+                <div id="modal-contenido" class="space-y-3">
+                    </div>
+            </div>
+        </div>
+    </div>
+
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-
         const hoy = new Date();
         const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const fechaStr = hoy.toLocaleDateString('es-CL', opciones);
-        document.getElementById('fecha-hoy').textContent =
-            fechaStr.charAt(0).toUpperCase() + fechaStr.slice(1);
+        document.getElementById('fecha-hoy').textContent = fechaStr.charAt(0).toUpperCase() + fechaStr.slice(1);
 
         const rolUsuario  = localStorage.getItem('rol');
         const nombreGuard = localStorage.getItem('nombre') || 'Usuario';
         document.getElementById('nombre-usuario').textContent = nombreGuard;
 
-        const iniciales = nombreGuard
-            .split(' ')
-            .filter(Boolean)
-            .slice(0, 2)
-            .map(p => p[0].toUpperCase())
-            .join('');
+        const iniciales = nombreGuard.split(' ').filter(Boolean).slice(0, 2).map(p => p[0].toUpperCase()).join('');
         document.getElementById('header-avatar').textContent = iniciales || '?';
 
         if (rolUsuario === '1') {
@@ -513,74 +391,163 @@
                 return { emoji: '🔴', clase: 'borde-red', ic: 'ic-red', badge: 'badge-red', label: 'Sin resolución' };
             if (e.includes('proceso'))
                 return { emoji: '🟡', clase: 'borde-amber', ic: 'ic-amber', badge: 'badge-amber', label: 'En proceso' };
-            return { emoji: '🔵', clase: 'borde-blue', ic: 'ic-blue', badge: 'badge-blue', label: 'Pendiente' };
+            return { emoji: '🔵', clase: 'borde-blue', ic: 'ic-blue', badge: 'badge-blue', label: 'Cerrado' };
         }
 
-        fetch('obtener_estadisticas.php')
-            .then(res => res.json())
-            .then(respuesta => {
-                if (!respuesta.exito) return;
-                const s = respuesta.datos;
+        window.cargarEstadisticas = function() {
+            fetch('obtener_estadisticas.php')
+                .then(res => res.json())
+                .then(respuesta => {
+                    if (!respuesta.exito) return;
+                    const s = respuesta.datos;
 
-                if (rolUsuario === '1') {
-                    document.getElementById('fun-sin-resolver').textContent = s.abiertos    ?? '0';
-                    document.getElementById('fun-en-proceso').textContent   = s.en_proceso  ?? '0';
-                    document.getElementById('fun-cerrados').textContent     = s.cerrados_mes ?? '0';
-
-                } else {
-                    document.getElementById('enc-sin-resolver').textContent = s.abiertos    ?? '0';
-                    document.getElementById('enc-en-proceso').textContent   = s.en_proceso  ?? '0';
-                    document.getElementById('enc-cerrados').textContent     = s.cerrados_mes ?? '0';
-
-                    if (s.abiertos > 0) {
-                        const banner = document.getElementById('banner-alerta');
-                        document.getElementById('banner-texto').textContent =
-                            `Últimos incidentes registrados.`;
-                        banner.classList.remove('hidden');
-                    }
-
-                    const lista = document.getElementById('lista-conflictos');
-                    if (respuesta.conflictos && respuesta.conflictos.length > 0) {
-                        lista.innerHTML = respuesta.conflictos.map(c => {
-                            const { emoji, clase, badge, label } = iconoEstado(c.estado_caso);
-                            const desc = c.descripcion
-                                ? (c.descripcion.length > 80
-                                    ? c.descripcion.slice(0, 77) + '...'
-                                    : c.descripcion)
-                                : 'Sin descripción';
-                            return `
-                            <div class="conflict-card ${clase}">
-                                <div class="conflict-icon ${clase.replace('borde-','ic-')}">${emoji}</div>
-                                <div style="flex:1;min-width:0;">
-                                    <div class="conflict-title">${desc}</div>
-                                    <div class="conflict-meta">📅 ${c.fecha ?? '—'}</div>
-                                    <div class="conflict-footer">
-                                        <span class="badge ${badge}">${label}</span>
-                                    </div>
-                                </div>
-                                <button class="btn-ver" style="flex-shrink:0;align-self:center;">Ver</button>
-                            </div>`;
-                        }).join('');
+                    if (rolUsuario === '1') {
+                        document.getElementById('fun-sin-resolver').textContent = s.abiertos    ?? '0';
+                        document.getElementById('fun-en-proceso').textContent   = s.en_proceso  ?? '0';
+                        document.getElementById('fun-cerrados').textContent     = s.cerrados_mes ?? '0';
                     } else {
-                        lista.innerHTML = `
-                        <div class="bg-white border border-gray-200 rounded-xl p-10 text-center">
-                            <div style="font-size:36px;margin-bottom:10px;">✅</div>
-                            <p class="text-sm font-semibold text-gray-700">Sin conflictos activos</p>
-                            <p class="text-xs text-gray-400 mt-1">El establecimiento no tiene incidentes pendientes.</p>
-                        </div>`;
+                        document.getElementById('enc-sin-resolver').textContent = s.abiertos    ?? '0';
+                        document.getElementById('enc-en-proceso').textContent   = s.en_proceso  ?? '0';
+                        document.getElementById('enc-cerrados').textContent     = s.cerrados_mes ?? '0';
+
+                        if (s.abiertos > 0) {
+                            const banner = document.getElementById('banner-alerta');
+                            document.getElementById('banner-texto').textContent = `Últimos incidentes registrados.`;
+                            banner.classList.remove('hidden');
+                        }
+
+                        const lista = document.getElementById('lista-conflictos');
+                        if (respuesta.conflictos && respuesta.conflictos.length > 0) {
+                            lista.innerHTML = respuesta.conflictos.map(c => {
+                                const { emoji, clase, badge, label } = iconoEstado(c.estado_caso);
+                                const desc = c.descripcion ? (c.descripcion.length > 80 ? c.descripcion.slice(0, 77) + '...' : c.descripcion) : 'Sin descripción';
+                                return `
+                                <div class="conflict-card ${clase}">
+                                    <div class="conflict-icon ${clase.replace('borde-','ic-')}">${emoji}</div>
+                                    <div style="flex:1;min-width:0;">
+                                        <div class="conflict-title">${desc}</div>
+                                        <div class="conflict-meta">📅 ${c.fecha ?? '—'}</div>
+                                        <div class="conflict-footer">
+                                            <span class="badge ${badge}">${label}</span>
+                                        </div>
+                                    </div>
+                                    <button class="btn-ver" onclick="window.location.href='visualizacion.php'" style="flex-shrink:0;align-self:center;">Ver</button>
+                                </div>`;
+                            }).join('');
+                        } else {
+                            lista.innerHTML = `<div class="bg-white border border-gray-200 rounded-xl p-10 text-center"><p class="text-sm text-gray-500">Sin conflictos recientes.</p></div>`;
+                        }
                     }
-                }
-            })
-            .catch(err => {
-                console.error('Error al cargar dashboard:', err);
-            });
+                })
+                .catch(err => console.error('Error al cargar dashboard:', err));
+        };
+
+        cargarEstadisticas();
 
         document.getElementById('btn-cerrar-sesion').addEventListener('click', () => {
             localStorage.clear();
             window.location.href = 'login.html';
         });
     });
-    </script>
 
+   // modal listados
+    window.abrirModalListado = function(estado) {
+        const modal = document.getElementById('modal-listado');
+        const titulo = document.getElementById('modal-titulo');
+        const contenido = document.getElementById('modal-contenido');
+        const rolUsuario = localStorage.getItem('rol');
+
+        const titulos = {
+            'abierto': 'Incidentes Sin Resolución',
+            'en proceso': 'Incidentes En Proceso',
+            'cerrado': 'Incidentes Cerrados'
+        };
+        
+        titulo.textContent = titulos[estado] || 'Listado de Incidentes';
+        contenido.innerHTML = '<div class="text-center text-gray-400 py-8">Cargando datos...</div>';
+        modal.classList.remove('hidden');
+
+        fetch(`obtener_mis_conflictos.php?estado=${encodeURIComponent(estado)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.exito && data.conflictos && data.conflictos.length > 0) {
+                    contenido.innerHTML = data.conflictos.map(c => {
+                        
+                        let estadoUI = '';
+                        let botonDetalles = '';
+
+                        // Si es Encargado, agregamos el select y el botón de detalles
+                        if (rolUsuario === '2') {
+                            estadoUI = `
+                                <select onchange="cambiarEstadoRapido(${c.id_conflicto}, this.value, this)" class="px-2 py-1 rounded-md border border-gray-300 text-xs font-semibold text-gray-700 bg-white cursor-pointer focus:ring-2 focus:ring-blue-500">
+                                    <option value="abierto" ${c.estado_caso === 'abierto' ? 'selected' : ''}>Sin resolución</option>
+                                    <option value="en proceso" ${c.estado_caso === 'en proceso' ? 'selected' : ''}>En proceso</option>
+                                    <option value="cerrado" ${c.estado_caso === 'cerrado' ? 'selected' : ''}>Cerrado</option>
+                                </select>
+                                <span id="msg-update-${c.id_conflicto}" class="text-[10px] text-emerald-600 font-bold hidden ml-2">✓ Guardado</span>
+                            `;
+                            botonDetalles = `<button onclick="window.location.href='visualizacion.php'" class="ml-3 text-xs text-blue-600 hover:underline">Ir a detalles →</button>`;
+                        } else {
+                            // Si es Funcionario, solo texto estático y SIN botón
+                            estadoUI = `<span class="px-2 py-0.5 rounded-full border border-gray-200 bg-white font-medium text-[10px] uppercase">${c.estado_caso}</span>`;
+                            botonDetalles = ''; 
+                        }
+
+                        return `
+                        <div class="p-4 border border-gray-200 rounded-xl hover:border-blue-200 bg-gray-50/30 mb-3">
+                            <div class="flex flex-col gap-2">
+                                <p class="text-sm font-semibold text-gray-800">
+                                    ${c.descripcion ? c.descripcion : 'Sin descripción registrada'}
+                                </p>
+                                <div class="flex items-center justify-between mt-2">
+                                    <span class="text-xs text-gray-500">📅 ${c.fecha ? new Date(c.fecha).toLocaleDateString('es-CL') : '—'}</span>
+                                    <div class="flex items-center">
+                                        ${estadoUI}
+                                        ${botonDetalles}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    }).join('');
+                } else {
+                    contenido.innerHTML = `<div class="text-center py-10 text-gray-500">No se encontraron incidentes en esta categoría.</div>`;
+                }
+            })
+            .catch(err => {
+                contenido.innerHTML = '<div class="text-center text-red-500 py-8">Error al cargar la información.</div>';
+            });
+    };
+    // Función para guardar solo el estado desde el modal rápido
+    window.cambiarEstadoRapido = function(id_conflicto, nuevoEstado, selectElement) {
+        const msgSpan = document.getElementById(`msg-update-${id_conflicto}`);
+        selectElement.disabled = true; 
+
+        fetch('actualizar_estado.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_conflicto: id_conflicto, estado: nuevoEstado })
+        })
+        .then(res => res.json())
+        .then(data => {
+            selectElement.disabled = false;
+            if (data.exito) {
+                msgSpan.classList.remove('hidden');
+                setTimeout(() => msgSpan.classList.add('hidden'), 2000);
+                cargarEstadisticas(); // Refresca los números de fondo automáticamente
+            } else {
+                alert('Error: ' + data.mensaje);
+            }
+        })
+        .catch(err => {
+            selectElement.disabled = false;
+            alert('Error al conectar con el servidor.');
+        });
+    };
+
+    window.cerrarModalListado = function() {
+        document.getElementById('modal-listado').classList.add('hidden');
+        cargarEstadisticas();
+    };
+    </script>
 </body>
 </html>
