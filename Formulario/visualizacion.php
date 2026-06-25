@@ -212,7 +212,7 @@ $resultado = $conn->query($sql);
                                 <tr class="hover:bg-blue-50 hover:shadow-md cursor-pointer transition-all duration-200" 
                                     data-id="<?= $fila['id_conflicto'] ?>"
                                     data-funcionario="<?= htmlspecialchars($fila['funcionario']) ?>"
-                                    data-alumnos="<?= htmlspecialchars($fila['alumnos']) ?>"
+                                    data-alumnos="<?= htmlspecialchars($fila['alumnos'] ?? 'Sin alumnos asociados') ?>"
                                     data-fecha="<?= htmlspecialchars($fila['fecha_registro']) ?>"
                                     data-estado="<?= htmlspecialchars($fila['estado_caso']) ?>"
                                     data-descripcion="<?= htmlspecialchars($fila['descripcion']) ?>">
@@ -243,7 +243,6 @@ $resultado = $conn->query($sql);
                 </table>
             </div>
 
-
         </div>
     </main>
 
@@ -251,28 +250,30 @@ $resultado = $conn->query($sql);
         &copy; 2026 Plataforma Woldo. Todos los derechos reservados.
     </footer>
 
+<div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden">
+        
+        <div class="flex justify-between items-center px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+            <h2 id="modalTitulo" class="text-lg font-bold text-gray-900 tracking-tight"></h2>
+            <button id="cerrarModalX" class="text-gray-400 hover:text-gray-600 text-xl font-medium transition">&times;</button>
+        </div>
 
+        <div id="modalContenido" class="p-6 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6 leading-relaxed">
+            </div>
 
- 
-<div
-    id="modal"
-    class="hidden fixed inset-0 bg-black/50 flex items-center justify-center"
->
-    <div class="bg-white p-6 rounded-xl max-w-2xl w-full">
-
-        <h2 id="modalTitulo"></h2>
-
-        <div id="modalContenido"></div>
-
-        <button
-            id="cerrarModal"
-            class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-        >
-            Cerrar
-        </button>
+        <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50/50">
+            <button id="cerrarModal" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-xl text-sm font-medium shadow-sm transition">Cerrar Ventana</button>
+        </div>
 
     </div>
 </div>
+
+<div id="lightbox" class="hidden fixed inset-0 bg-black/95 flex flex-col items-center justify-center z-[100] p-4 cursor-zoom-out">
+    <button id="cerrarLightbox" class="absolute top-5 right-5 text-white/70 hover:text-white text-4xl font-light transition">&times;</button>
+    <img id="lightboxImagen" src="" alt="Evidencia en grande" class="max-w-full max-h-[80vh] rounded-lg shadow-2xl object-contain">
+    <p id="lightboxTexto" class="text-white/80 text-sm mt-4 font-medium tracking-wide bg-black/40 px-4 py-1.5 rounded-full"></p>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -296,22 +297,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll("tbody tr").forEach(fila => {
         fila.addEventListener("click", (e) => {
-            if (e.target.tagName === "BUTTON" || e.target.tagName === "TEXTAREA") {
+            if (e.target.tagName === "BUTTON" || e.target.tagName === "TEXTAREA" || e.target.tagName === "INPUT" || e.target.tagName === "SELECT") {
                 return;
             }
 
             const id = fila.dataset.id;
             document.getElementById("modalTitulo").textContent = "Gestión de Conflicto #" + id;
 
+            // Inyectamos la estructura original de dos columnas
             document.getElementById("modalContenido").innerHTML = `
-                <div class="space-y-3">
-                    <p><strong>Funcionario:</strong> ${fila.dataset.funcionario}</p>
-                    <p><strong>Alumnos:</strong> ${fila.dataset.alumnos}</p>
-                    <p><strong>Fecha:</strong> ${fila.dataset.fecha}</p>
+                <div class="space-y-4 border-r border-gray-100 pr-2">
+                    <h3 class="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">Detalles del Caso</h3>
+                    <p class="text-sm text-gray-600"><strong>Funcionario:</strong> <span class="text-gray-800">${fila.dataset.funcionario}</span></p>
+                    <p class="text-sm text-gray-600"><strong>Alumnos:</strong> <span class="text-gray-800">${fila.dataset.alumnos}</span></p>
+                    <p class="text-sm text-gray-600"><strong>Fecha:</strong> <span class="text-gray-800">${fila.dataset.fecha}</span></p>
 
                     <div>
-                        <label class="block font-semibold mb-1">Estado:</label>
-                        <select id="modal-estado" class="w-full border border-gray-300 rounded p-2 text-sm">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Estado:</label>
+                        <select id="modal-estado" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                             <option value="abierto" ${fila.dataset.estado === 'abierto' ? 'selected' : ''}>Abierto</option>
                             <option value="en proceso" ${fila.dataset.estado === 'en proceso' ? 'selected' : ''}>En proceso</option>
                             <option value="cerrado" ${fila.dataset.estado === 'cerrado' ? 'selected' : ''}>Cerrado</option>
@@ -319,20 +322,141 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
 
                     <div>
-                        <label class="block font-semibold mb-1">Descripción:</label>
-                        <textarea id="modal-descripcion" rows="4" class="w-full border border-gray-300 rounded p-2 text-sm">${fila.dataset.descripcion}</textarea>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción:</label>
+                        <textarea id="modal-descripcion" rows="4" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none">${fila.dataset.descripcion}</textarea>
                     </div>
 
-                    <div id="modal-mensaje" class="hidden text-sm font-medium"></div>
+                    <div id="modal-mensaje" class="hidden text-sm font-medium p-2 rounded-lg"></div>
 
-                    <button id="guardarCambios" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded font-medium">
-                        Guardar Cambios
+                    <button id="guardarCambios" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-lg font-medium shadow transition">
+                        Actualizar Conflicto
                     </button>
+                </div>
+
+                <div class="space-y-4 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-3">Imágenes de Evidencia</h3>
+                        
+                        <form id="form-subir-evidencia" class="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center bg-gray-50/50 hover:bg-gray-50 transition relative">
+                            <input type="file" id="input-evidencia" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                            <div class="space-y-1.5 pointer-events-none">
+                                <span class="text-xl inline-block">📁</span>
+                                <p class="text-xs font-medium text-blue-600" id="texto-archivo-seleccionado">Seleccionar o arrastrar imagen</p>
+                                <p class="text-[11px] text-gray-400 italic" id="subtexto-archivo">Ningún archivo seleccionado</p>
+                            </div>
+                            <button type="submit" id="btn-enviar-evidencia" class="mt-3 px-4 py-1.5 bg-gray-400 text-white text-xs font-medium rounded-md shadow-sm transition relative z-10" disabled>
+                                Subir Archivo
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-xl p-4 bg-gray-50/30 flex-grow min-h-[180px] max-h-[240px] overflow-y-auto">
+                        <p class="text-xs font-semibold text-gray-500 mb-2">Imágenes en el servidor:</p>
+                        <div id="lista-imagenes-galeria" class="grid grid-cols-3 gap-2">
+                            <p class="text-xs text-gray-400 italic col-span-3" id="texto-cargando-galeria">Cargando galería local...</p>
+                        </div>
+                    </div>
                 </div>
             `;
 
             document.getElementById("modal").classList.remove("hidden");
 
+            // --- Lógica de la Galería Local Vinculada ---
+            const cargarGaleriaLocal = () => {
+                const galeriaDiv = document.getElementById("lista-imagenes-galeria");
+                if (!galeriaDiv) return;
+
+                // URL absoluta para evitar el error 404 detectado en localhost
+                fetch(`/Formulario/obtener_evidencias.php?id_conflicto=${id}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error(`Error ${res.status}`);
+                        return res.json();
+                    })
+                    .then(imagenes => {
+                        if (!Array.isArray(imagenes) || imagenes.length === 0) {
+                            galeriaDiv.innerHTML = '<p class="text-xs text-gray-400 italic col-span-3">No hay evidencias aún.</p>';
+                            return;
+                        }
+                        galeriaDiv.innerHTML = '';
+                        imagenes.forEach(img => {
+                            const contenedor = document.createElement('div');
+                            contenedor.className = "group relative border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm hover:shadow transition cursor-pointer";
+                            contenedor.innerHTML = `
+                                <img src="/Formulario/${img.ruta}" alt="${img.nombre}" class="w-full h-16 object-cover">
+                                <span class="absolute bottom-0 inset-x-0 bg-black/60 text-[9px] text-white text-center truncate py-0.5 group-hover:bg-blue-600 transition">
+                                    ${img.nombre}
+                                </span>
+                            `;
+                            contenedor.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                window.abrirImagenGrande(`/Formulario/${img.ruta}`, img.nombre);
+                            });
+                            galeriaDiv.appendChild(contenedor);
+                        });
+                    })
+                    .catch(err => {
+                        console.error("Error cargando galería:", err);
+                        galeriaDiv.innerHTML = '<p class="text-xs text-rose-500 italic col-span-3">❌ Error al conectar con el servidor de imágenes.</p>';
+                    });
+            };
+
+            // Ejecutar la carga inmediatamente al abrir el caso
+            cargarGaleriaLocal();
+
+            // --- Lógica del Input de Archivos ---
+            const inputEvidencia = document.getElementById("input-evidencia");
+            const btnEnviarEvidencia = document.getElementById("btn-enviar-evidencia");
+            const txtSeleccionado = document.getElementById("texto-archivo-seleccionado");
+            const subtxtSeleccionado = document.getElementById("subtexto-archivo");
+
+            inputEvidencia.addEventListener("change", () => {
+                if (inputEvidencia.files.length > 0) {
+                    const archivo = inputEvidencia.files[0];
+                    txtSeleccionado.textContent = "✓ Archivo Cargado";
+                    subtxtSeleccionado.textContent = archivo.name;
+                    btnEnviarEvidencia.disabled = false;
+                    btnEnviarEvidencia.className = "mt-3 px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md shadow-sm transition relative z-10 cursor-pointer";
+                }
+            });
+
+            // --- Enviar Formulario de Evidencia (Subida Local) ---
+            document.getElementById("form-subir-evidencia").addEventListener("submit", (e) => {
+                e.preventDefault();
+                if (inputEvidencia.files.length === 0) return;
+
+                const formData = new FormData();
+                formData.append("id_conflicto", id);
+                formData.append("evidencia", inputEvidencia.files[0]);
+
+                btnEnviarEvidencia.disabled = true;
+                btnEnviarEvidencia.textContent = "Subiendo...";
+
+                fetch('/Formulario/subir_evidencia.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.exito) {
+                        txtSeleccionado.textContent = "Seleccionar o arrastrar imagen";
+                        subtxtSeleccionado.textContent = "Ningún archivo seleccionado";
+                        inputEvidencia.value = "";
+                        btnEnviarEvidencia.textContent = "Subir Archivo";
+                        cargarGaleriaLocal(); // Refrescar la galería al instante
+                    } else {
+                        alert(data.mensaje);
+                        btnEnviarEvidencia.disabled = false;
+                        btnEnviarEvidencia.textContent = "Subir Archivo";
+                    }
+                })
+                .catch(() => {
+                    alert("Error crítico al subir la imagen.");
+                    btnEnviarEvidencia.disabled = false;
+                    btnEnviarEvidencia.textContent = "Subir Archivo";
+                });
+            });
+
+            // --- Guardar Cambios de Texto (Descripción y Estado) ---
             document.getElementById("guardarCambios").addEventListener("click", () => {
                 const nuevaDescripcion = document.getElementById("modal-descripcion").value.trim();
                 const nuevoEstado = document.getElementById("modal-estado").value;
@@ -347,17 +471,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(data => {
                     msgDiv.classList.remove('hidden');
                     if (data.exito) {
-                        msgDiv.className = 'text-sm font-medium text-emerald-600';
+                        msgDiv.className = 'text-sm font-medium text-emerald-600 bg-emerald-50 p-2 rounded-lg';
                         msgDiv.textContent = '✓ ' + data.mensaje;
                         setTimeout(() => location.reload(), 800);
                     } else {
-                        msgDiv.className = 'text-sm font-medium text-rose-600';
+                        msgDiv.className = 'text-sm font-medium text-rose-600 bg-rose-50 p-2 rounded-lg';
                         msgDiv.textContent = '✗ ' + data.mensaje;
                     }
                 })
                 .catch(() => {
                     msgDiv.classList.remove('hidden');
-                    msgDiv.className = 'text-sm font-medium text-rose-600';
+                    msgDiv.className = 'text-sm font-medium text-rose-600 bg-rose-50 p-2 rounded-lg';
                     msgDiv.textContent = '✗ Error al conectar con el servidor.';
                 });
             });
