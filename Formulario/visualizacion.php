@@ -498,7 +498,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cierre de modales
     const cerrarM = () => document.getElementById("modal").classList.add("hidden");
-    document.getElementById("cerrarModal").addEventListener("click", cerrarM);
     document.getElementById("cerrarModalX").addEventListener("click", cerrarM);
     document.getElementById("modal").addEventListener("click", (e) => { if (e.target.id === "modal") cerrarM(); });
 
