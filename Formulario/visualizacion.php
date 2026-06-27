@@ -262,7 +262,11 @@ $resultado = $conn->query($sql);
             </div>
 
         <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50/50">
-            <button id="cerrarModal" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-xl text-sm font-medium shadow-sm transition">Cerrar Ventana</button>
+            <a id="btn-exportar-pdf" href="#" target="_blank"
+            class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-sm font-medium shadow-sm transition flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 8l-3-3m3 3l3-3"/></svg>
+                Exportar PDF
+            </a>
         </div>
 
     </div>
@@ -360,7 +364,11 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
             document.getElementById("modal").classList.remove("hidden");
-
+                      // Actualizar enlace del PDF con el ID del conflicto actual
+            const btnPdf = document.getElementById("btn-exportar-pdf");
+            if (btnPdf) {
+                btnPdf.href = `exportar_pdf.php?id=${id}`;
+            }          
             // --- Lógica de la Galería Local Vinculada ---
             const cargarGaleriaLocal = () => {
                 const galeriaDiv = document.getElementById("lista-imagenes-galeria");
